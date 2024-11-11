@@ -8,17 +8,13 @@ interface CardBodyProps{
     title: string;
     text: string;
 }
+//Tendría que definir un tamaño para los elementos de la card en el caso de que la card esté en la lista y
+// en el caso de que la card esté seleccionada individualmente.
 
 function Card(props: Props){
     const {children} = props;
 
-    return <div className="card" style = {{
-                                color: 'red',
-    }}>
-        <div className="card-body">
-            {children}  
-        </div>
-    </div>       
+    return <div className="card">{children}</div>
 }
 
 export function CardBody(props: CardBodyProps){

@@ -1,15 +1,21 @@
-import Titulo from './Titulo.tsx';
 import Card, { CardBody } from './components/Card.tsx';
 import List from './components/List.tsx'
+import Score from './components/Score.tsx';
+//import Select from './components/Select.tsx'
 
 function App() {
-  const list = ['Goku', 'Messi', 'Batman']
+  const list: string[] = ['Goku', 'Messi', 'Batman'];
   return (
-    <>
-      <Titulo/>
+    <> 
+    <Score />
+    {/* 3 Selects para liga, división y club*/}
       <Card>
         <CardBody title='Título de esto' text='Valur'/>
-        <List data={list} />
+        {list.length !== 0  ? (
+          <List data={list} />
+        ) : (
+          <p>No hay elementos</p>
+        )}
       </Card>
     </>
   ) 
