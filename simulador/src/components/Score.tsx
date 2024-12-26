@@ -8,20 +8,38 @@ interface Chance {
 }
 
 const Score = () => {
-    let team1 = { name: "Real Madrid", logo: "team1logo.png", chances: 41 }; // Simulación de datos del equipo
-    let team2 = { name: "Sevilla", logo: "team2logo.png", chances: 48 };
+
+    const teams = [
+        { name: "Real Madrid", logo: "team1logo.png", chances: 11 },
+        { name: "Sevilla", logo: "team2logo.png", chances: 8 },
+        { name: "Barcelona", logo: "team3logo.png", chances: 5 },
+        { name: "Atlético Madrid", logo: "team4logo.png", chances: 2 },
+    ];
+
+    const handleTeam1Change = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedTeam = teams.find(team => team.name === event.target.value);
+        if (selectedTeam) {
+            setTeam1(selectedTeam);
+        }
+    };
+
+    const handleTeam2Change = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedTeam = teams.find(team => team.name === event.target.value);
+        if (selectedTeam) {
+            setTeam2(selectedTeam);
+        }
+    };
 
     const gameTime: number = 45;
 
     const [currentMinute, setCurrentMinute] = useState<string | number>(1);
-    const [totalGameTime, setTotalGameTime] = useState<number | null>(null);
     const [matchDuration, setMatchDuration] = useState<number | null>(null);
     const [isGameStarted, setIsGameStarted] = useState<boolean>(false);
+    const [isGameFinished, setIsGameFinished] = useState<boolean>(false);
     const [goalsTeam1, setGoalsTeam1] = useState(0);
     const [goalsTeam2, setGoalsTeam2] = useState(0);
-
-    const [chancesTeam1, setChancesTeam1] = useState<any[]>([]);
-    const [chancesTeam2, setChancesTeam2] = useState<any[]>([]);
+    const [team1, setTeam1] = useState({ name: "Real Madrid", logo: "team1logo.png", chances: 11 });
+    const [team2, setTeam2] = useState({ name: "Sevilla", logo: "team2logo.png", chances: 8 });
     const [displayedChances, setDisplayedChances] = useState<any[]>([]);
 
     const intervalIdRef = useRef<number | null>(null);
@@ -41,13 +59,12 @@ const Score = () => {
         };
     }, []);
     //---------------------------------------------------------------------------------------------------------------------
-    //---------------------------------------------------------------------------------------------------------------------
     
     const playMatch = () => {
         const minutesPlayed = simulateMinutes();
         const simmedChances = assignMinutes(minutesPlayed);
         defineMatchDuration(minutesPlayed, simmedChances);
-        // writeChances(); Acá escribo abajo las chances de gol de cada equipo.
+        setIsGameStarted(true);
     }
 
     const simulateMinutes = () => {
@@ -168,15 +185,13 @@ const Score = () => {
 
         const interval = setInterval(() => {
             if (currentMinuteIndex >= minutesPlayed.length) {
-                if (currentMinuteIndex === minutesPlayed.length) {
-                    console.log("Último minuto simulado:", minutesPlayed[minutesPlayed.length - 1]);
-                }
                 clearInterval(interval);
                 scoreText = 'Final del partido';
                 setCurrentMinute(scoreText);
+                setIsGameFinished(true);
                 return;
             }
-    
+
             const currentMinute = minutesPlayed[currentMinuteIndex];
             if(currentMinute.number > 45 && currentMinute.half == 'first'){
                 scoreText = `45'+${currentMinute.number-45}`;
@@ -194,6 +209,7 @@ const Score = () => {
     
             chancesThisMinute.forEach((chance) => {
                 console.log(`${chance.minute} minutos: ${chance.result} de ${chance.team}.`);
+                writeChance(chance);
     
                 if (chance.result === "Gol") {
                     if (chance.team === team1.name) {
@@ -211,6 +227,14 @@ const Score = () => {
             currentMinuteIndex++;
         }, intervalDuration);
     }
+
+    const writeChance = (chance: Chance) => {
+        setDisplayedChances((prevChances) => [...prevChances, chance]);
+    }
+
+    const resetGame = () => {
+        window.location.reload();
+      };
 
     return (
         <div>
@@ -233,67 +257,84 @@ const Score = () => {
                     <option value="60">60 minutos</option>
                     <option value="full">Partido completo</option>
                 </select>
+{/*                 <label htmlFor="match-duration">Chances especiales:</label>
+                <input type="number"></input> */}
+
+            </div>
+
+            <div style={{marginTop: "20px"}}>
+                <h4>{team1.name} vs {team2.name} </h4>
+            </div>
+
+            <div>
+                <label htmlFor="team1-select">Seleccionar Equipo 1: </label>
+                <select id="team1-select" value={team1.name} onChange={handleTeam1Change} disabled={isGameStarted}>
+                {teams.map((team) => (
+                    <option key={team.name} value={team.name}>
+                    {team.name}
+                    </option>
+                ))}
+                </select>
+            </div>
+
+            <div>
+                <label htmlFor="team2-select">Seleccionar Equipo 2: </label>
+                <select id="team2-select" value={team2.name} onChange={handleTeam2Change} disabled={isGameStarted}>
+                {teams.map((team) => (
+                    <option key={team.name} value={team.name}>
+                    {team.name}
+                    </option>
+                ))}
+                </select>
             </div>
 
             <h5>{currentMinute}</h5>
             <h2>{goalsTeam1} - {goalsTeam2}</h2>
-            {totalGameTime !== null && <p>Total tiempo de juego: {simulateMinutes().length} minutos</p>}
+            {simulateMinutes() && <p>Total tiempo de juego: {simulateMinutes().length} minutos</p>}
 
             <button onClick={playMatch} disabled={isGameStarted || matchDuration === null}>
                 Jugar
             </button>
 
-            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "20px" }}>
-                <div>
-                    <h4>{team1.name}</h4>
-                    {displayedChances
-                        .filter((chance) => chance.team === team1.name)
-                        .map((chance, index) => (
-                            <p key={index}>
-                                Min {chance.minute}: {chance.result === "Gol" ? "🟢 Gol" : "❌ Errado"}
-                            </p>
+            <div style={{ display: "flex", justifyContent: "center", marginTop: "20px", width: "30%" }}>
+                <div style={{ width: "60%", textAlign: "center" }}>
+                    <ul style={{ listStyle: "none", padding: 0 }}>
+                        {displayedChances.map((chance, index) => (
+                            <li
+                                key={index}
+                                style={{
+                                    display: "flex",
+                                    justifyContent: chance.team === team1.name ? "flex-start" : "flex-end",
+                                    marginBottom: "5px",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        padding: "5px 10px",
+                                        backgroundColor: "#f1f1f1",
+                                        borderRadius: "5px",
+                                        textAlign: chance.team === team2.name ? "left" : "right",
+                                        maxWidth: "70%",
+                                        wordWrap: "break-word",
+                                    }}
+                                >
+                                    {chance.team === team1.name ? chance.result === "Gol" ? `${chance.minute}' 🟢 Gol`
+                                            : `${chance.minute}' ❌ Errado`
+                                        : chance.result === "Gol"
+                                        ? `Gol 🟢 ${chance.minute}'`
+                                        : `Errado ❌ ${chance.minute}'`}
+                                </span>
+                            </li>
                         ))}
-                </div>
-                <div>
-                    <h4>{team2.name}</h4>
-                    {displayedChances
-                        .filter((chance) => chance.team === team2.name)
-                        .map((chance, index) => (
-                            <p key={index}>
-                                Min {chance.minute}: {chance.result === "Gol" ? "🟢 Gol" : "❌ Errado"}
-                            </p>
-                        ))}
+                    </ul>
                 </div>
             </div>
+
+            {isGameFinished && (
+                <button onClick={resetGame}>Reiniciar</button>
+            )}
         </div>
     );
 };
 
 export default Score;
-
-//Creo que lo mejor es simular el tiempo de juego total (ya está listo) y
-    // luego simular las chances de ambos (listo en generateChances).
-    //Tomar las chances, y asignarles un minuto al azar. Esto después de que se sepa cuántos minutos tendrá el partido.
-    //Cuando el minuto del marcador coincida con el del gol, subir el gol al marcador. Luego extender esto
-    // a las chances erradas en el tablero.
-    //Si el PT dura 47 minutos y el partido dura 95, un gol en el minuto "60" habrá sido en el minuto 63 jugado, aunque
-    // en pantalla se muestre como minuto 60. Será algo como if segundo tiempo: minutos + offset - duración PT (revisar).
-    /* {
-        minute: 1, shoot: "Gol", half: first, minuteScreen: 1
-        minute: 47, shoot: "Gol", half: first, minuteScreen: 45+2
-        minute: 46, shoot: "Gol", half: second, minuteScreen: 46
-    } */
-   //Una función que sea
-   /*
-    advanceTime(minutes, chances1, chances2){
-        if minuto === chances1.minuto || minuto === chances2.minuto{
-            si es gol, sumarlo al marcador e imprimir chance
-            else, imprimir chance
-        }
-            minuto++;
-    }
-    Y quizás llamar la función de manera que sea
-    while minuto < total partido{
-    advanceTime(tiempoDeJuego, RealMadrid, Sevilla)
-    }
-   */
