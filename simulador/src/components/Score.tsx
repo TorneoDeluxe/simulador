@@ -10,10 +10,10 @@ interface Chance {
 const Score = () => {
 
     const teams = [
-        { name: "Real Madrid", logo: "team1logo.png", chances: 11 },
-        { name: "Sevilla", logo: "team2logo.png", chances: 8 },
-        { name: "Barcelona", logo: "team3logo.png", chances: 5 },
-        { name: "Atlético Madrid", logo: "team4logo.png", chances: 2 },
+        { name: "Real Madrid", logo: "team1logo.png", chances: 11, media: 90 },
+        { name: "Sevilla", logo: "team2logo.png", chances: 8, media: 82 },
+        { name: "Barcelona", logo: "team3logo.png", chances: 5, media: 87 },
+        { name: "Atlético Madrid", logo: "team4logo.png", chances: 2, media: 85 },
     ];
 
     const handleTeam1Change = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -38,8 +38,8 @@ const Score = () => {
     const [isGameFinished, setIsGameFinished] = useState<boolean>(false);
     const [goalsTeam1, setGoalsTeam1] = useState(0);
     const [goalsTeam2, setGoalsTeam2] = useState(0);
-    const [team1, setTeam1] = useState({ name: "Real Madrid", logo: "team1logo.png", chances: 11 });
-    const [team2, setTeam2] = useState({ name: "Sevilla", logo: "team2logo.png", chances: 8 });
+    const [team1, setTeam1] = useState({ name: "Real Madrid", logo: "team1logo.png", chances: 11, media: 90 });
+    const [team2, setTeam2] = useState({ name: "Sevilla", logo: "team2logo.png", chances: 8, media: 82 });
     const [displayedChances, setDisplayedChances] = useState<any[]>([]);
 
     const intervalIdRef = useRef<number | null>(null);
@@ -58,7 +58,6 @@ const Score = () => {
             if (intervalIdRef.current) clearInterval(intervalIdRef.current);
         };
     }, []);
-    //---------------------------------------------------------------------------------------------------------------------
     
     const playMatch = () => {
         const minutesPlayed = simulateMinutes();
@@ -85,9 +84,15 @@ const Score = () => {
         return totalGameTime;
     }
 
+    const estimateChances = (chances: number, chancesDifferential: number) => {
+        return Math.floor(Math.random() * (2 * chancesDifferential + 1)) + (chances - chancesDifferential);
+    };
+
     const simulateChances = (team1: any, team2: any) => {
         const team1Name = team1.name;
         const team2Name = team2.name;
+        //Reemplazar esto con el cálculo de chances según la media.
+        //La constante de abajo tiene que ser (estimatedChances(cálculo, diferencial))
         const team1Chances = team1.chances;
         const team2Chances = team2.chances;
 
@@ -234,7 +239,80 @@ const Score = () => {
 
     const resetGame = () => {
         window.location.reload();
-      };
+    };
+
+    function calculateChances(media1: any, media2: any, avgChances: any) {
+        const lowerMedia = Math.min(media1, media2);
+        const mediaDifference = Math.abs(media1 - media2);
+        let disparity;
+        let base1, base2;
+    
+        if (lowerMedia >= 77) {
+            disparity = 1.05;
+        } else if (lowerMedia >= 70) {
+            disparity = 1.1;
+        } else if (lowerMedia >= 66) {
+            disparity = 1.2;
+        } else if (lowerMedia >= 59) {
+            disparity = 1.5;
+        } else if (lowerMedia >= 53) {
+            disparity = 1.8;
+        } else {
+            disparity = 2.5;
+        }
+    
+        // Calcular incremento por diferencia de media
+        const alpha = (mediaDifference / 13) * disparity;
+        //El 13 es un número mágico para calcular mediante la disparidad, para hallar una base relativamente precisa.
+    
+        const delta = Math.floor(Math.random() * 2) + 1;
+        //Delta devuelve un valor que es 1 o 2 para que las chances oscilen en ese rango. Si la base es 12 y delta = 2, las chances
+        // estarán entre 10 y 14.
+        let baseHigh = avgChances / 2 + alpha * delta;
+        let baseLow = avgChances / 2 - alpha * delta;
+    
+        if (media1 >= media2) {
+            base1 = baseHigh;
+            base2 = baseLow;
+        } else {
+            base1 = baseLow;
+            base2 = baseHigh;
+        }
+    
+        const range1 = base1 < 0 ? [0, 1] : [Math.max(0, Math.ceil(base1 - delta)), Math.ceil(base1 + delta)];
+    
+        const range2 = base2 < 0 ? [0, 1] : [Math.max(0, Math.ceil(base2 - delta)), Math.ceil(base2 + delta)];
+    
+        return {
+            media1,
+            media2,
+            avgChances,
+            disparity,
+            alpha,
+            base1: base1.toFixed(2),
+            base2: base2.toFixed(2),
+            range1,
+            range2,
+        };
+    }
+    
+    let avgChances = 20;
+    const matches = [
+        { media1: 90, media2: 87 },
+        { media1: 90, media2: 81 },
+        { media1: 90, media2: 75 },
+        { media1: 90, media2: 40 },
+        { media1: 80, media2: 60 },
+        { media1: 60, media2: 50 },
+        { media1: 90, media2: 25 },
+        { media1: 74, media2: 70 },
+    ];
+    
+    matches.forEach(match => {
+        const result = calculateChances(match.media1, match.media2, avgChances);
+        console.log(match.media1 + " vs " + match.media2);
+        console.log(result);
+    });
 
     return (
         <div>
@@ -242,7 +320,7 @@ const Score = () => {
                 <label htmlFor="match-duration">Duración del partido:</label>
                 <select id="match-duration" onChange={handleMatchDurationChange} disabled={isGameStarted}>
                     <option value="">Seleccionar:</option>
-                    <option value="0.0016">1 segundo</option>
+                    <option value="0.0017">1 segundo</option>
                     <option value="0.05">3 segundos</option>
                     <option value="0.25">15 segundos</option>
                     <option value="0.5">30 segundos</option>
@@ -338,3 +416,10 @@ const Score = () => {
 };
 
 export default Score;
+
+//Ideas para definir la media de países:
+//Países: ARG, ESP, FRA: 85. ALE, ING, BRA: 84
+// Para el resto de selecciones, proporcional según puntos de ranking FIFA.
+//Si una selección tiene el 70% de puntos de Argentina, entonces su media será el 70% de 85.
+//Medias de clubes: a calcular. Sobre todo clubes del ascenso argentino y de Islandia. Para el resto
+// puedo usar las medias del FC25. Apoyarme en lo hecho anteriormente en los clubes del Modo Carrera.
