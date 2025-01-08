@@ -1,12 +1,13 @@
 import Card, { CardBody } from './components/Card.tsx';
 import List from './components/List.tsx'
 import Score from './components/Score.tsx';
+import React from 'react';
 //import Select from './components/Select.tsx'
 
 function App() {
   //const list: string[] = ['Goku', 'Messi', 'Batman'];
   return (
-    <> 
+    <>
     <Score />
     {/* 3 Selects para liga, división y club*/}
 {/*       <Card>
