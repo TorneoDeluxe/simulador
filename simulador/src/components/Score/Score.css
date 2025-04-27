@@ -1,0 +1,75 @@
+body{
+    margin-left: 2%;
+}
+
+.score-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    width: 30%;
+}
+
+.score-inner {
+    width: 60%;
+    text-align: center;
+}
+
+.score-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.score-item {
+    display: flex;
+    margin-bottom: 5px;
+    animation: fadeIn 0.5s ease;
+}
+
+.score-item.left {
+    justify-content: flex-start;
+}
+
+.score-item.right {
+    justify-content: flex-end;
+}
+
+.score-text {
+    padding: 5px 10px;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+    max-width: 70%;
+    word-wrap: break-word;
+}
+
+.score-text.align-left {
+    text-align: left;
+}
+
+.score-text.align-right {
+    text-align: right;
+}
+
+.score-text.special {
+    color: green;
+    font-weight: bold;
+}
+
+.match-header {
+    margin-top: 20px;
+}
+
+.team-select {
+    margin-top: 20px;
+}
+
+.special-chances {
+    margin-top: 10px;
+}
+
+/* Animación fadeIn */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}

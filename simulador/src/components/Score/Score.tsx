@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import "./Score.css";
 
 interface Chance {
     result: string;
@@ -10,13 +11,6 @@ interface Chance {
 
 const Score = () => {
     const teams = [
-        { name: "Real Madrid", logo: "team1logo.png", media: 90 },
-        { name: "Sevilla", logo: "team2logo.png", media: 82 },
-        { name: "Barcelona", logo: "team3logo.png", media: 87 },
-        { name: "Atlético Madrid", logo: "team4logo.png", media: 85 },
-        { name: "Gibraltar", logo: "team4logo.png", media: 40 },
-        { name: "Tuvalu", logo: "team4logo.png", media: 25 },
-        { name: "San Lorenzo", logo: "team4logo.png", media: 70 },
         { name: "Aldosivi", media: 66, logo: "" },
         { name: "Almagro", media: 64, logo: "" },
         { name: "Arsenal de Sarandí", media: 67, logo: "" },
@@ -35,6 +29,13 @@ const Score = () => {
         { name: "Sarmiento (J)", media: 66, logo: "" },
         { name: "Temperley", media: 67, logo: "" },
         { name: "Tigre", media: 68, logo: "" },
+        { name: "Real Madrid", logo: "team1logo.png", media: 90 },
+        { name: "Sevilla", logo: "team2logo.png", media: 82 },
+        { name: "Barcelona", logo: "team3logo.png", media: 87 },
+        { name: "Atlético Madrid", logo: "team4logo.png", media: 85 },
+        { name: "Gibraltar", logo: "team4logo.png", media: 40 },
+        { name: "Tuvalu", logo: "team4logo.png", media: 25 },
+        { name: "San Lorenzo", logo: "team4logo.png", media: 70 },
     ];
 
     const handleTeam1Change = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -53,7 +54,7 @@ const Score = () => {
 
     const gameTime: number = 45;
 
-    const [currentMinute, setCurrentMinute] = useState<string | number>(1);
+    const [currentMinute, setCurrentMinute] = useState<string | number>(0);
     const [matchDuration, setMatchDuration] = useState<number | null>(null);
     const [isGameStarted, setIsGameStarted] = useState<boolean>(false);
     const [isGameFinished, setIsGameFinished] = useState<boolean>(false);
@@ -118,12 +119,8 @@ const Score = () => {
         const team2Chances = Math.floor(Math.random() * (chancesData.range2[1] - chancesData.range2[0] + 1))
         + chancesData.range2[0] + specialChancesTeam2;
 
-        console.log("Sin chances especiales:")
         console.log(team1Name + ": " + (team1Chances - specialChancesTeam1) + " chances.");
         console.log(team2Name + ": " + (team2Chances - specialChancesTeam2) + " chances.");
-        console.log("Con chances especiales:")
-        console.log(team1Name + ": " + team1Chances + " chances.");
-        console.log(team2Name + ": " + team2Chances + " chances.");
 
         let team1Shots: any = [];
         let team2Shots: any = [];
@@ -133,7 +130,12 @@ const Score = () => {
 
         for(let i= 0; i < team1Chances; i++){
             const isSpecial = i >= team1Chances - specialChancesTeam1;
-            let shot: number = Math.floor(Math.random() * 6) + 1;
+            let shot: number;
+            if(isSpecial){
+                shot = Math.floor(Math.random() * 3) + 1;
+            } else {
+                shot = Math.floor(Math.random() * 6) + 1;
+            }
             if (shot === 1){
                 result = 'Gol';
                 goals1++;
@@ -145,7 +147,12 @@ const Score = () => {
 
         for(let i= 0; i < team2Chances; i++){
             const isSpecial = i >= team2Chances - specialChancesTeam2;
-            let shot: number = Math.floor(Math.random() * 6) + 1;
+            let shot: number;
+            if(isSpecial){
+                shot = Math.floor(Math.random() * 3) + 1;
+            } else {
+                shot = Math.floor(Math.random() * 6) + 1;
+            }
             if (shot === 1){
                 result = 'Gol';
                 goals2++;
@@ -293,7 +300,15 @@ const Score = () => {
         }
     
         // Calcular incremento por diferencia de media
-        const alpha = (mediaDifference / 10) * disparity;
+        let factor;
+        if (mediaDifference < 5) {
+            // Para diferencias pequeñas, usamos un divisor mayor
+            factor = 15;
+        } else {
+            // Para diferencias más grandes, usamos el divisor original o uno menor
+            factor = 10;
+        }
+        const alpha = (mediaDifference / factor) * disparity;
         //El 13 es un número mágico para calcular mediante la disparidad, para hallar una base relativamente precisa.
     
         let delta;
@@ -364,27 +379,30 @@ const Score = () => {
                     <option value="60">60 minutos</option>
                     <option value="full">Partido completo</option>
                 </select>
-{/*                 <label htmlFor="match-duration">Chances especiales:</label>
-                <input type="number"></input> */}
 
             </div>
 
-            <div style={{marginTop: "20px"}}>
-                <h4>{team1.name} vs {team2.name} </h4>
+            <div className="match-header">
+                <h4>{team1.name} vs {team2.name}</h4>
             </div>
 
-            <div>
+            <div className="team-select">
                 <label htmlFor="team1-select">Seleccionar Equipo 1: </label>
-                <select id="team1-select" value={team1.name} onChange={handleTeam1Change} disabled={isGameStarted}>
-                {teams.map((team) => (
-                    <option key={team.name} value={team.name}>
-                    {team.name} - {team.media}
-                    </option>
-                ))}
+                <select
+                    id="team1-select"
+                    value={team1.name}
+                    onChange={handleTeam1Change}
+                    disabled={isGameStarted}
+                >
+                    {teams.map((team) => (
+                        <option key={team.name} value={team.name}>
+                            {team.name} - {team.media}
+                        </option>
+                    ))}
                 </select>
             </div>
 
-            <div style={{ marginTop: "10px"}}>
+            <div className="special-chances">
                 <label>
                     Chances especiales equipo 1:
                     <input
@@ -397,18 +415,23 @@ const Score = () => {
                 </label>
             </div>
 
-            <div style={{ marginTop: "10px"}}>
+            <div className="team-select special-chances">
                 <label htmlFor="team2-select">Seleccionar Equipo 2: </label>
-                <select id="team2-select" value={team2.name} onChange={handleTeam2Change} disabled={isGameStarted}>
-                {teams.map((team) => (
-                    <option key={team.name} value={team.name}>
-                    {team.name} - {team.media}
-                    </option>
-                ))}
+                <select
+                    id="team2-select"
+                    value={team2.name}
+                    onChange={handleTeam2Change}
+                    disabled={isGameStarted}
+                >
+                    {teams.map((team) => (
+                        <option key={team.name} value={team.name}>
+                            {team.name} - {team.media}
+                        </option>
+                    ))}
                 </select>
             </div>
 
-            <div style={{ marginTop: "10px"}}>
+            <div className="special-chances">
                 <label>
                     Chances especiales equipo 2:
                     <input
@@ -421,6 +444,7 @@ const Score = () => {
                 </label>
             </div>
 
+
             <h5>{currentMinute}</h5>
             <h2>{goalsTeam1} - {goalsTeam2}</h2>
 
@@ -428,29 +452,16 @@ const Score = () => {
                 Jugar
             </button>
 
-            <div style={{ display: "flex", justifyContent: "center", marginTop: "20px", width: "30%" }}>
-                <div style={{ width: "60%", textAlign: "center" }}>
-                    <ul style={{ listStyle: "none", padding: 0 }}>
+            <div className="score-container">
+                <div className="score-inner">
+                    <ul className="score-list">
                         {displayedChances.map((chance, index) => (
                             <li
                                 key={index}
-                                style={{
-                                    display: "flex",
-                                    justifyContent: chance.team === team1.name ? "flex-start" : "flex-end",
-                                    marginBottom: "5px",
-                                }}
+                                className={`score-item ${chance.team === team1.name ? 'left' : 'right'}`}
                             >
                                 <span
-                                    style={{
-                                        padding: "5px 10px",
-                                        backgroundColor: "#f1f1f1",
-                                        borderRadius: "5px",
-                                        textAlign: chance.team === team2.name ? "left" : "right",
-                                        maxWidth: "70%",
-                                        wordWrap: "break-word",
-                                        color: chance.isSpecial ? "green" : "inherit", // Verde si es especial
-                                        fontWeight: chance.isSpecial ? "bold" : "normal", // Negrita si es especial
-                                    }}
+                                    className={`score-text ${chance.isSpecial ? 'special' : ''} ${chance.team === team2.name ? 'align-left' : 'align-right'}`}
                                 >
                                     {chance.team === team1.name
                                         ? chance.result === "Gol"
@@ -466,6 +477,7 @@ const Score = () => {
                 </div>
             </div>
 
+
             {isGameFinished && (
                 <button onClick={resetGame}>Reiniciar</button>
             )}
@@ -474,10 +486,3 @@ const Score = () => {
 };
 
 export default Score;
-
-//Luego: reducir altura de la chance
-//Reemplazar select de clubes por cuadros
-
-//Siguiente: pasar clubes a base de datos. Incorporar backend. En lugar de
-//{ name: "Atlanta", media: 63, logo: "" },
-//{ name: team.name, media: team.media, logo: "" },
