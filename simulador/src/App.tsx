@@ -1,24 +1,35 @@
-import Card, { CardBody } from './components/Card.tsx';
-import List from './components/List.tsx'
-import Score from './components/Score.tsx';
 import React from 'react';
-//import Select from './components/Select.tsx'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
 
-function App() {
-  //const list: string[] = ['Goku', 'Messi', 'Batman'];
+import Inicio from './Inicio.tsx';
+import Partido from './Partido.tsx';
+import Score from './components/Score/Score.tsx';
+
+const App: React.FC = () =>  {
+
+  useEffect(() => {
+    const fetchLigas = async () => {
+      try {
+        const response = await fetch("https://localhost:7225/api/equipos");
+        const data = await response.json();
+        console.log("Datos recibidos:", data);
+      } catch (error) {
+        console.error("Error al cargar ligas:", error);
+      }
+    };
+
+    fetchLigas();
+  }, []);
+
   return (
-    <>
-    <Score />
-    {/* 3 Selects para liga, división y club*/}
-{/*       <Card>
-        <CardBody title='Título de esto' text='Valur'/>
-        {list.length !== 0  ? (
-          <List data={list} />
-        ) : (
-          <p>No hay elementos</p>
-        )}
-      </Card> */}
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Inicio />} />
+        <Route path="/partido" element={<Partido />} />
+        <Route path="/partido/simulacion" element={<Score />} />
+      </Routes>
+    </Router>
   ) 
 }
 
