@@ -20,14 +20,14 @@ const Penalties = () => {
     
     const dive = (): number => {
       const divePosition = Math.floor(Math.random() * positions) + 1;
-      // Treat positions 2 and 5 as equivalent
-      return divePosition === 2 ? 5 : divePosition;
+      // Las posiciones 2 y 5 son equivalentes porque el arquero se queda en el medio.
+      return divePosition === 5 ? 2 : divePosition;
     };
     
     const penaltyShot = (): boolean => {
       const shotPosition = shoot();
     
-      if (shotPosition !== 5) {
+      if (shotPosition !== 2) {
         const destination = shootOnGoal();
         const goalkeeperPosition = dive();
 
@@ -43,9 +43,9 @@ const Penalties = () => {
         }
 
       } else {
-        // Tiro a la posición 5
+        // Tiro a la posición 2
         const goalkeeperPosition = dive();
-        if (goalkeeperPosition === 5) {
+        if (goalkeeperPosition === 2) {
           const saveChance = Math.floor(Math.random() * possibilities) + 1;
           scored = saveChance > 9 ? true : false;
         } else {
