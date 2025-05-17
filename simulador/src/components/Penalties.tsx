@@ -1,4 +1,7 @@
-const Penalties = () => {
+import React, { useState, useEffect } from 'react';
+import './Penalties.css';
+
+const Penalties: React.FC = () => {
   const positions = 6;
   /*_________
     | 1 2 3 |
@@ -9,6 +12,18 @@ const Penalties = () => {
   let onGoal: boolean;
   let scored: boolean;
   
+  // Estado para el intervalo de tiempo (ms)
+  const [interval, setInterval] = useState<number>(5000);
+  // Estado para mostrar los mensajes de los penales en la UI
+  const [messages, setMessages] = useState<string[]>([]);
+  // Estado para controlar si la tanda está en curso
+  const [isRunning, setIsRunning] = useState<boolean>(false);
+  // Estado para guardar el resultado del partido
+  const [matchResult, setMatchResult] = useState<string>('');
+  // Equipos
+  const [teamA, setTeamA] = useState<string>("River");
+  const [teamB, setTeamB] = useState<string>("San Lorenzo");
+
   const shoot = (): number => { // Patear a una de las 6 zonas.
     return Math.floor(Math.random() * positions) + 1;
   };
@@ -61,96 +76,188 @@ const Penalties = () => {
     return scored;
   };
 
-  const penaltyShootout = (teamA: string, teamB: string): void => {
+  const addMessage = (msg: string) => {
+    setMessages(prevMessages => [...prevMessages, msg]);
+    console.log(msg);
+  };
+
+  const penaltyShootout = () => {
+    // Limpiar mensajes anteriores
+    setMessages([]);
+    setMatchResult('');
+    setIsRunning(true);
+    
     const rounds = 5;
     let turnoA = 1;
     let turnoB = 1;
     let teamAScore = 0;
     let teamBScore = 0;
+    let estado = "A"; // A, B, SuddenA, SuddenB
+    let suddenDeathRound = 1;
   
-    console.log(`${teamA} vs ${teamB} - Tanda de penales`);
+    addMessage(`${teamA} vs ${teamB} - Tanda de penales`);
   
-    while (turnoA <= rounds && turnoB <= rounds) {
-      console.log(`Ronda ${turnoA}:`);
+    const intervalId = window.setInterval(() => {
+      if (estado === "A") {
+        if (teamAScore > teamBScore + (rounds - turnoB + 1)) {
+          addMessage(`${teamA} gana!`);
+          setMatchResult(`Resultado final: ${teamA} ${teamAScore} - ${teamBScore} ${teamB}`);
+          clearInterval(intervalId);
+          setIsRunning(false);
+          return;
+        }
   
-      // Verificamos si B está matemáticamente eliminado antes de que A patee
-      // Si A ya tiene ventaja insuperable, termina la tanda
-      if (teamAScore > teamBScore + (rounds - turnoB + 1)) {
-        console.log(`${teamA} gana! ${teamB} no lo puede alcanzar.`);
-        break;
-      }
-  
-      // Equipo A patea
-      const teamAScored = penaltyShot();
-      let restantesA = rounds - turnoA;
-      if (teamAScored) teamAScore++;
-      console.log(`${teamA} ${teamAScored ? "gol" : "erra"}! Total: ${teamAScore}. Restantes: ${restantesA}`);
-      
-      // Verificamos si A ganó anticipadamente después de patear
-      // Solo si B no puede alcanzar a A, incluso ganando todos sus penales restantes
-      if (teamAScore > teamBScore + (rounds - turnoB + 1)) {
-        console.log(`${teamA} gana anticipadamente!`);
-        break;
-      }
-      
-      // Verificamos si A está matemáticamente eliminado antes de que B patee
-      if (teamBScore > teamAScore + (rounds - turnoA)) {
-        console.log(`${teamB} gana! ${teamA} no lo puede alcanzar.`);
-        break;
-      }
-      
-      // Equipo B patea
-      const teamBScored = penaltyShot();
-      let restantesB = rounds - turnoB;
-      if (teamBScored) teamBScore++;
-      console.log(`${teamB} ${teamBScored ? "gol" : "erra"}! Total: ${teamBScore}. Restantes: ${restantesB}`);
-      
-      // Verificamos si B ganó anticipadamente después de patear
-      if (teamBScore > teamAScore + (rounds - turnoA)) {
-        console.log(`${teamB} gana anticipadamente!`);
-        break;
-      }
-      
-      turnoA++;
-      turnoB++;
-    }
-  
-    // Si todavía hay empate después de los 5 penales, vamos a muerte súbita
-    if (teamAScore === teamBScore) {
-      let suddenDeathRound = 1;
-      
-      while (teamAScore === teamBScore) {
-        console.log(`Ronda ${suddenDeathRound+5} - Muerte súbita ${suddenDeathRound}:`);
-        
-        // Equipo A patea
         const teamAScored = penaltyShot();
         if (teamAScored) teamAScore++;
-        console.log(`${teamA} ${teamAScored ? "gol" : "erra"}! Total: ${teamAScore}`);
-        
-        // Equipo B patea
+        addMessage(`Ronda ${turnoA}:`);
+        addMessage(`${teamA} ${teamAScored ? "gol" : "erra"}! Total: ${teamAScore}.`);
+  
+        if (teamAScore > teamBScore + (rounds - turnoB + 1)) {
+          addMessage(`${teamA} gana!`);
+          setMatchResult(`Resultado final: ${teamA} ${teamAScore} - ${teamBScore} ${teamB}`);
+          clearInterval(intervalId);
+          setIsRunning(false);
+          return;
+        }
+  
+        if (teamBScore > teamAScore + (rounds - turnoA)) {
+          addMessage(`${teamB} gana!`);
+          setMatchResult(`Resultado final: ${teamA} ${teamAScore} - ${teamBScore} ${teamB}`);
+          clearInterval(intervalId);
+          setIsRunning(false);
+          return;
+        }
+
+        estado = "B";
+      } else if (estado === "B") {
         const teamBScored = penaltyShot();
         if (teamBScored) teamBScore++;
-        console.log(`${teamB} ${teamBScored ? "gol" : "erra"}! Total: ${teamBScore}`);
-        
-        suddenDeathRound++;
+        addMessage(`${teamB} ${teamBScored ? "gol" : "erra"}! Total: ${teamBScore}.`);
+  
+        if (teamBScore > teamAScore + (rounds - turnoA)) {
+          addMessage(`${teamB} gana!`);
+          setMatchResult(`Resultado final: ${teamA} ${teamAScore} - ${teamBScore} ${teamB}`);
+          clearInterval(intervalId);
+          setIsRunning(false);
+          return;
+        }
+  
+        turnoA++;
+        turnoB++;
+  
+        if (turnoA > rounds && turnoB > rounds && teamAScore === teamBScore) {
+          addMessage("Empate tras los 5 penales. Vamos a muerte súbita.");
+          estado = "SuddenA";
+        } else if (turnoA > rounds && turnoB > rounds) {
+          const ganador = teamAScore > teamBScore ? teamA : teamB;
+          addMessage(`${ganador} gana!`);
+          setMatchResult(`Resultado final: ${teamA} ${teamAScore} - ${teamBScore} ${teamB}`);
+          clearInterval(intervalId);
+          setIsRunning(false);
+          return;
+        } else {
+          estado = "A";
+        }
+      } else if (estado === "SuddenA") {
+        addMessage(`Ronda ${suddenDeathRound + 5} - Muerte súbita ${suddenDeathRound}:`);
+  
+        const teamAScored = penaltyShot();
+        if (teamAScored) teamAScore++;
+        addMessage(`${teamA} ${teamAScored ? "gol" : "erra"}! Total: ${teamAScore}`);
+  
+        estado = "SuddenB";
+      } else if (estado === "SuddenB") {
+        const teamBScored = penaltyShot();
+        if (teamBScored) teamBScore++;
+        addMessage(`${teamB} ${teamBScored ? "gol" : "erra"}! Total: ${teamBScore}`);
+  
+        if (teamAScore !== teamBScore) {
+          const ganador = teamAScore > teamBScore ? teamA : teamB;
+          addMessage(`${ganador} gana!`);
+          setMatchResult(`Resultado final: ${teamA} ${teamAScore} - ${teamBScore} ${teamB}`);
+          clearInterval(intervalId);
+          setIsRunning(false);
+        } else {
+          suddenDeathRound++;
+          estado = "SuddenA";
+        }
       }
-    }
-  
-    console.log(`Resultado final: ${teamA} ${teamAScore} - ${teamB} ${teamBScore}`);
-  
-    if (teamAScore > teamBScore) {
-      console.log(`${teamA} gana la serie!`);
-    } else {
-      console.log(`${teamB} gana la serie!`);
-    }
+    }, interval); // Usando el intervalo seleccionado
   };
-  
-  penaltyShootout("Team A", "Team B");
 
-  return <div>
-    <h1>
-    Penales</h1>
+  const handleIntervalChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setInterval(parseInt(e.target.value));
+  };
+
+  const handleTeamAChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTeamA(e.target.value);
+  };
+
+  const handleTeamBChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTeamB(e.target.value);
+  };
+
+  return (
+    <div className="penalties-container">
+      <h1>Tanda de Penales</h1>
+      
+      <div className="settings">
+        <div className="teams-input">
+          <div>
+            <label>Local: </label>
+            <input 
+              type="text" 
+              value={teamA} 
+              onChange={handleTeamAChange} 
+              disabled={isRunning}
+            />
+          </div>
+          <div>
+            <label>Visitante: </label>
+            <input 
+              type="text" 
+              value={teamB} 
+              onChange={handleTeamBChange} 
+              disabled={isRunning}
+            />
+          </div>
+        </div>
+        
+        <div className="interval-select">
+          <label>Velocidad del penal: </label>
+          <select value={interval} onChange={handleIntervalChange} disabled={isRunning}>
+            <option value="1000">Muy rápido (1s)</option>
+            <option value="2000">Rápido (2s)</option>
+            <option value="3000">Normal (3s)</option>
+            <option value="5000">Lento (5s)</option>
+            <option value="8000">Muy lento (8s)</option>
+          </select>
+        </div>
+      </div>
+      
+      <button 
+        className="start-button" 
+        onClick={penaltyShootout} 
+        disabled={isRunning}
+      >
+        Iniciar penales
+      </button>
+      
+      {matchResult && (
+        <div className="match-result">
+          <h2>{matchResult}</h2>
+        </div>
+      )}
+      
+      <div className="penalty-log">
+        {messages.map((msg, index) => (
+          <div key={index} className="penalty-message">
+            {msg}
+          </div>
+        ))}
+      </div>
     </div>
-}
+  );
+};
 
 export default Penalties;
