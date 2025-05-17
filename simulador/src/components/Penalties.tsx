@@ -1,5 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './Penalties.css';
+
+interface PenaltyRound {
+  teamA: boolean | null;
+  teamB: boolean | null;
+}
 
 const Penalties: React.FC = () => {
   const positions = 6;
@@ -23,6 +28,13 @@ const Penalties: React.FC = () => {
   // Equipos
   const [teamA, setTeamA] = useState<string>("River");
   const [teamB, setTeamB] = useState<string>("San Lorenzo");
+  // Estado para los penales individuales
+  const [penaltyRounds, setPenaltyRounds] = useState<PenaltyRound[]>([]);
+  // Estado para los totales
+  const [scoreA, setScoreA] = useState<number>(0);
+  const [scoreB, setScoreB] = useState<number>(0);
+  // Estado para control de ronda actual
+  const [currentRound, setCurrentRound] = useState<number>(0);
 
   const shoot = (): number => { // Patear a una de las 6 zonas.
     return Math.floor(Math.random() * positions) + 1;
@@ -81,11 +93,41 @@ const Penalties: React.FC = () => {
     console.log(msg);
   };
 
+  // Función para actualizar el resultado de un penal en la tabla
+  const updatePenaltyResult = (team: 'teamA' | 'teamB', scored: boolean, round: number) => {
+    setPenaltyRounds(prevRounds => {
+      const newRounds = [...prevRounds];
+      // Si la ronda no existe, creamos todas las necesarias hasta esa ronda
+      while (newRounds.length <= round) {
+        newRounds.push({ teamA: null, teamB: null });
+      }
+      
+      // Actualizamos el resultado del penal
+      newRounds[round] = {
+        ...newRounds[round],
+        [team]: scored
+      };
+      
+      return newRounds;
+    });
+    
+    // Actualizamos el marcador total
+    if (team === 'teamA' && scored) {
+      setScoreA(prev => prev + 1);
+    } else if (team === 'teamB' && scored) {
+      setScoreB(prev => prev + 1);
+    }
+  };
+
   const penaltyShootout = () => {
     // Limpiar mensajes anteriores
     setMessages([]);
     setMatchResult('');
     setIsRunning(true);
+    setPenaltyRounds([]);
+    setScoreA(0);
+    setScoreB(0);
+    setCurrentRound(0);
     
     const rounds = 5;
     let turnoA = 1;
@@ -108,9 +150,14 @@ const Penalties: React.FC = () => {
         }
   
         const teamAScored = penaltyShot();
+        const restantesA = rounds - turnoA;
         if (teamAScored) teamAScore++;
         addMessage(`Ronda ${turnoA}:`);
-        addMessage(`${teamA} ${teamAScored ? "gol" : "erra"}! Total: ${teamAScore}.`);
+        addMessage(`${teamA} ${teamAScored ? "gol" : "erra"}! Total: ${teamAScore}. Restantes: ${restantesA}`);
+        
+        // Actualizar tabla de penales
+        updatePenaltyResult('teamA', teamAScored, turnoA - 1);
+        setCurrentRound(turnoA);
   
         if (teamAScore > teamBScore + (rounds - turnoB + 1)) {
           addMessage(`${teamA} gana!`);
@@ -131,8 +178,12 @@ const Penalties: React.FC = () => {
         estado = "B";
       } else if (estado === "B") {
         const teamBScored = penaltyShot();
+        const restantesB = rounds - turnoB;
         if (teamBScored) teamBScore++;
-        addMessage(`${teamB} ${teamBScored ? "gol" : "erra"}! Total: ${teamBScore}.`);
+        addMessage(`${teamB} ${teamBScored ? "gol" : "erra"}! Total: ${teamBScore}. Restantes: ${restantesB}`);
+        
+        // Actualizar tabla de penales
+        updatePenaltyResult('teamB', teamBScored, turnoB - 1);
   
         if (teamBScore > teamAScore + (rounds - turnoA)) {
           addMessage(`${teamB} gana!`);
@@ -164,12 +215,19 @@ const Penalties: React.FC = () => {
         const teamAScored = penaltyShot();
         if (teamAScored) teamAScore++;
         addMessage(`${teamA} ${teamAScored ? "gol" : "erra"}! Total: ${teamAScore}`);
+        
+        // Actualizar tabla de penales
+        updatePenaltyResult('teamA', teamAScored, rounds + suddenDeathRound - 1);
+        setCurrentRound(rounds + suddenDeathRound);
   
         estado = "SuddenB";
       } else if (estado === "SuddenB") {
         const teamBScored = penaltyShot();
         if (teamBScored) teamBScore++;
         addMessage(`${teamB} ${teamBScored ? "gol" : "erra"}! Total: ${teamBScore}`);
+        
+        // Actualizar tabla de penales
+        updatePenaltyResult('teamB', teamBScored, rounds + suddenDeathRound - 1);
   
         if (teamAScore !== teamBScore) {
           const ganador = teamAScore > teamBScore ? teamA : teamB;
@@ -197,6 +255,14 @@ const Penalties: React.FC = () => {
     setTeamB(e.target.value);
   };
 
+  // Renderiza el resultado de un penal
+  const renderPenaltyResult = (result: boolean | null, isActive: boolean) => {
+    if (result === null) {
+      return isActive ? <span className="penalty-pending">...</span> : <span className="penalty-empty">-</span>;
+    }
+    return result ? <span className="penalty-scored">✅</span> : <span className="penalty-missed">❌</span>;
+  };
+
   return (
     <div className="penalties-container">
       <h1>Tanda de Penales</h1>
@@ -204,7 +270,7 @@ const Penalties: React.FC = () => {
       <div className="settings">
         <div className="teams-input">
           <div>
-            <label>Local: </label>
+            <label>Equipo Local: </label>
             <input 
               type="text" 
               value={teamA} 
@@ -213,7 +279,7 @@ const Penalties: React.FC = () => {
             />
           </div>
           <div>
-            <label>Visitante: </label>
+            <label>Equipo Visitante: </label>
             <input 
               type="text" 
               value={teamB} 
@@ -224,7 +290,7 @@ const Penalties: React.FC = () => {
         </div>
         
         <div className="interval-select">
-          <label>Velocidad del penal: </label>
+          <label>Velocidad de la simulación: </label>
           <select value={interval} onChange={handleIntervalChange} disabled={isRunning}>
             <option value="1000">Muy rápido (1s)</option>
             <option value="2000">Rápido (2s)</option>
@@ -240,8 +306,52 @@ const Penalties: React.FC = () => {
         onClick={penaltyShootout} 
         disabled={isRunning}
       >
-        Iniciar penales
+        Iniciar Tanda de Penales
       </button>
+      
+      {(penaltyRounds.length > 0 || isRunning) && (
+        <div className="penalties-table-container">
+          <table className="penalties-table">
+            <thead>
+              <tr>
+                <th className="team-name">Equipo</th>
+                {[...Array(Math.max(5, penaltyRounds.length))].map((_, index) => (
+                  <th key={index} className={`penalty-round ${currentRound === index + 1 ? 'current-round' : ''}`}>
+                    {index + 1}
+                  </th>
+                ))}
+                <th className="penalty-total">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="team-name">{teamA}</td>
+                {[...Array(Math.max(5, penaltyRounds.length))].map((_, index) => (
+                  <td key={index} className={`penalty-result ${currentRound === index + 1 ? 'current-round' : ''}`}>
+                    {renderPenaltyResult(
+                      penaltyRounds[index]?.teamA ?? null, 
+                      isRunning && currentRound === index + 1 && penaltyRounds[index]?.teamB === undefined
+                    )}
+                  </td>
+                ))}
+                <td className="penalty-total">{scoreA}</td>
+              </tr>
+              <tr>
+                <td className="team-name">{teamB}</td>
+                {[...Array(Math.max(5, penaltyRounds.length))].map((_, index) => (
+                  <td key={index} className={`penalty-result ${currentRound === index + 1 ? 'current-round' : ''}`}>
+                    {renderPenaltyResult(
+                      penaltyRounds[index]?.teamB ?? null,
+                      isRunning && currentRound === index + 1 && penaltyRounds[index]?.teamA !== undefined && penaltyRounds[index]?.teamB === undefined
+                    )}
+                  </td>
+                ))}
+                <td className="penalty-total">{scoreB}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      )}
       
       {matchResult && (
         <div className="match-result">
@@ -249,13 +359,13 @@ const Penalties: React.FC = () => {
         </div>
       )}
       
-      <div className="penalty-log">
+{/*       <div className="penalty-log">
         {messages.map((msg, index) => (
           <div key={index} className="penalty-message">
             {msg}
           </div>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 };
