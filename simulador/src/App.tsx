@@ -5,11 +5,12 @@ import { useEffect } from 'react';
 import Inicio from './Inicio.tsx';
 import Partido from './Partido.tsx';
 import Score from './components/Score/Score.tsx';
+import Penalties from './components/Penalties.tsx';
 
 const App: React.FC = () =>  {
 
   useEffect(() => {
-    const fetchLigas = async () => {
+    const fetchEquipos = async () => {
       try {
         const response = await fetch("https://localhost:7225/api/equipos");
         const data = await response.json();
@@ -18,8 +19,17 @@ const App: React.FC = () =>  {
         console.error("Error al cargar ligas:", error);
       }
     };
-
-    fetchLigas();
+    const fetchLigas = async () => {
+      try {
+        const response = await fetch("https://localhost:7225/api/ligas");
+        const data = await response.json();
+        console.log("Datos recibidos:", data);
+      } catch (error) {
+        console.error("Error al cargar ligas:", error);
+      }
+    };
+    //fetchEquipos();
+    //fetchLigas();
   }, []);
 
   return (
@@ -27,6 +37,7 @@ const App: React.FC = () =>  {
       <Routes>
         <Route path="/" element={<Inicio />} />
         <Route path="/partido" element={<Partido />} />
+        <Route path="/penales" element={<Penalties />} />
         <Route path="/partido/simulacion" element={<Score />} />
       </Routes>
     </Router>
