@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Penalties.css';
 
 interface PenaltyRound {
@@ -8,13 +8,7 @@ interface PenaltyRound {
 
 const Penalties: React.FC = () => {
   const positions = 6;
-  /*_________
-    | 1 2 3 |
-    | 4 5 6 |
-  */
-
   const possibilities = 20;
-  let onGoal: boolean;
   let scored: boolean;
   
   // Estado para el intervalo de tiempo (ms)
@@ -36,16 +30,21 @@ const Penalties: React.FC = () => {
   // Estado para control de ronda actual
   const [currentRound, setCurrentRound] = useState<number>(0);
 
-  const shoot = (): number => { // Patear a una de las 6 zonas.
-    return Math.floor(Math.random() * positions) + 1;
-  };
+  // Estados para la participación del usuario
+  const [userWillShoot, setUserWillShoot] = useState<boolean>(false);
+  const [userTeam, setUserTeam] = useState<string>("teamA");
+  const [userRound, setUserRound] = useState<number | string>(1);
+  const [isUserTurn, setIsUserTurn] = useState<boolean>(false);
+  const [userShotOptions, setUserShotOptions] = useState<boolean>(false);
+  const [currentPenaltyTurn, setCurrentPenaltyTurn] = useState<number>(1);
+
+  const shoot = (): number => { return Math.floor(Math.random() * positions) + 1; };  // Patear a una de las 6 zonas. 
   
   const shootOnGoal = (): boolean => { // Si el tiro llega o no al arco
+    let onGoal = false;
     const result = Math.floor(Math.random() * possibilities) + 1;
     if (result <= 17) {
       onGoal = true;
-    } else {
-      onGoal = false;
     }
     return onGoal;
   };
@@ -56,8 +55,9 @@ const Penalties: React.FC = () => {
     return divePosition === 5 ? 2 : divePosition;
   };
     
-  const penaltyShot = (): boolean => {
-    const shotPosition = shoot();
+  const penaltyShot = (userSelectedPosition?: number): boolean => {
+    // Usar la posición seleccionada por el usuario si está disponible, de lo contrario elegir aleatoriamente
+    const shotPosition = userSelectedPosition !== undefined ? userSelectedPosition : shoot();
   
     if (shotPosition !== 5) {
       const destination = shootOnGoal();
@@ -68,7 +68,7 @@ const Penalties: React.FC = () => {
       }
       else if (goalkeeperPosition === shotPosition) {
         const saveChance = Math.floor(Math.random() * possibilities) + 1;
-        scored = saveChance > 18 ? true : false;
+        scored = saveChance > 18;
       }
       else {
         scored = true;
@@ -79,7 +79,7 @@ const Penalties: React.FC = () => {
       const goalkeeperPosition = dive();
       if (goalkeeperPosition === 2) {
         const saveChance = Math.floor(Math.random() * possibilities) + 1;
-        scored = saveChance > 18 ? true : false;
+        scored = saveChance > 18;
       } else {
         scored = true;
       }
@@ -119,6 +119,39 @@ const Penalties: React.FC = () => {
     }
   };
 
+  // Función para manejar el tiro del usuario
+  const handleUserShot = (position: number) => {
+    setUserShotOptions(false);
+    
+    const userScored = penaltyShot(position);
+    const teamKey = userTeam as 'teamA' | 'teamB';
+    const teamName = teamKey === 'teamA' ? teamA : teamB;
+    
+    addMessage(`¡TU TURNO! Pateas a la posición ${position}`);
+    addMessage(`${teamName} ${userScored ? "gol" : "erra"}!`); // "River gol!"
+    
+    // Actualizamos el estado local que reflejará correctamente el resultado
+    // pero NO actualizamos el contador total aquí, lo hará el sistema general
+    
+    // Actualizar tabla de penales únicamente
+    // Nota: NO modificamos scoreA o scoreB aquí porque causaría doble conteo
+    updatePenaltyResult(teamKey, userScored, currentRound - 1); //TeamA, 6, NRonda -1
+    
+    // Continuar con la tanda de penales
+    setIsUserTurn(false);
+    resumeShootout();
+  };
+
+  // Referencia mutable para almacenar la función que continuará la tanda. Se modifica en nextStep()
+  let continueShootoutRef: () => void = () => {
+    console.log("Si llegaste acá, está mal.");
+  };
+  
+  const resumeShootout = () => {
+    // Esta función se llamará después de que el usuario patea
+    continueShootoutRef();
+  };
+
   const penaltyShootout = () => {
     // Limpiar mensajes anteriores
     setMessages([]);
@@ -128,6 +161,9 @@ const Penalties: React.FC = () => {
     setScoreA(0);
     setScoreB(0);
     setCurrentRound(0);
+    setIsUserTurn(false);
+    setUserShotOptions(false);
+    setCurrentPenaltyTurn(1);
     
     const rounds = 5;
     let turnoA = 1;
@@ -136,15 +172,113 @@ const Penalties: React.FC = () => {
     let teamBScore = 0;
     let estado = "A"; // A, B, SuddenA, SuddenB
     let suddenDeathRound = 1;
+    
+    // Calcular exactamente en qué momento el usuario pateará
+    // La ronda del usuario puede ser aleatoria
+    let actualUserRound = userRound;
+    if (userRound === 'random') {
+      actualUserRound = Math.floor(Math.random() * 11) + 1;
+      addMessage(`Se ha seleccionado aleatoriamente que patearás en la ronda ${actualUserRound}`);
+    }
   
     addMessage(`${teamA} vs ${teamB} - Tanda de penales`);
-  
-    const intervalId = window.setInterval(() => {
+    
+    // Variable para controlar si estamos esperando la acción del usuario
+    let waitingForUser = false;
+    
+    // Función que ejecutará cada paso de la tanda
+    const nextStep = () => {
+      // Si estamos esperando al usuario, no avanzamos
+      if (waitingForUser) {
+        return;
+      }
+      
+      // Determinar si es el turno del usuario
+      const currentTeamTurn = estado === "A" || estado === "SuddenA" ? "teamA" : "teamB";
+      const currentShooterRound = estado === "A" || estado === "SuddenA" ? turnoA : turnoB;
+      
+      // Calcular el número de tiro global (para cuando hay más de 11 jugadores)
+      const globalTurnNumber = currentShooterRound > 11 ? ((currentShooterRound - 1) % 11) + 1 : currentShooterRound;
+      
+      setCurrentPenaltyTurn(globalTurnNumber);
+      
+      const isUserShooting = userWillShoot && 
+                            currentTeamTurn === userTeam && 
+                            Number(actualUserRound) === globalTurnNumber;
+      
+      if (isUserShooting) {
+        // Es el turno del usuario
+        setIsUserTurn(true);
+        setUserShotOptions(true);
+        waitingForUser = true;
+        setCurrentRound(currentShooterRound);
+        
+        // Almacenar el estado actual para continuarlo después del tiro del usuario
+        const currentEstado = estado;
+        
+        addMessage(`¡Es tu turno de patear por ${currentTeamTurn === 'teamA' ? teamA : teamB}!`);
+        addMessage(`Selecciona una posición para tu tiro (1-6)`);
+        
+        // Definir la función que continuará después del tiro del usuario
+        continueShootoutRef = () => {
+          // Actualizar los contadores globales con el resultado del tiro del usuario
+          // Esto lo hacemos aquí para que se refleje en la lógica de la tanda
+          const userScoredResult = penaltyRounds[currentShooterRound - 1]?.[currentTeamTurn];
+          
+          if (userScoredResult) {
+            if (currentTeamTurn === 'teamA') {
+              teamAScore++;
+            } else {
+              teamBScore++;
+            }
+          }
+          
+          waitingForUser = false;
+          
+          // Continuamos con el flujo normal
+          if (currentEstado === "A") {
+            estado = "B";
+          } else if (currentEstado === "B") {
+            turnoA++;
+            turnoB++;
+            
+            if (turnoA > rounds && turnoB > rounds && teamAScore === teamBScore) {
+              estado = "SuddenA";
+            } else if (turnoA > rounds && turnoB > rounds) {
+              const ganador = teamAScore > teamBScore ? teamA : teamB;
+              addMessage(`${ganador} gana!`);
+              setMatchResult(`Resultado final: ${teamA} ${teamAScore} - ${teamBScore} ${teamB}`);
+              setIsRunning(false);
+              return;
+            } else {
+              estado = "A";
+            }
+          } else if (currentEstado === "SuddenA") {
+            estado = "SuddenB";
+          } else if (currentEstado === "SuddenB") {
+            if (teamAScore !== teamBScore) {
+              const ganador = teamAScore > teamBScore ? teamA : teamB;
+              addMessage(`${ganador} gana!`);
+              setMatchResult(`Resultado final: ${teamA} ${teamAScore} - ${teamBScore} ${teamB}`);
+              setIsRunning(false);
+              return;
+            } else {
+              suddenDeathRound++;
+              estado = "SuddenA";
+            }
+          }
+          
+          setTimeout(nextStep, interval);
+        };
+        
+        return;
+      }
+      
       if (estado === "A") {
+        // Verificar si el equipo A ya ganó matemáticamente
         if (teamAScore > teamBScore + (rounds - turnoB + 1)) {
           addMessage(`${teamA} gana!`);
           setMatchResult(`Resultado final: ${teamA} ${teamAScore} - ${teamBScore} ${teamB}`);
-          clearInterval(intervalId);
           setIsRunning(false);
           return;
         }
@@ -152,6 +286,7 @@ const Penalties: React.FC = () => {
         const teamAScored = penaltyShot();
         const restantesA = rounds - turnoA;
         if (teamAScored) teamAScore++;
+        
         addMessage(`Ronda ${turnoA}:`);
         addMessage(`${teamA} ${teamAScored ? "gol" : "erra"}! Total: ${teamAScore}. Restantes: ${restantesA}`);
         
@@ -159,18 +294,18 @@ const Penalties: React.FC = () => {
         updatePenaltyResult('teamA', teamAScored, turnoA - 1);
         setCurrentRound(turnoA);
   
+        // Verificar si el equipo A ya ganó matemáticamente
         if (teamAScore > teamBScore + (rounds - turnoB + 1)) {
           addMessage(`${teamA} gana!`);
           setMatchResult(`Resultado final: ${teamA} ${teamAScore} - ${teamBScore} ${teamB}`);
-          clearInterval(intervalId);
           setIsRunning(false);
           return;
         }
   
+        // Verificar si el equipo B ya ganó matemáticamente
         if (teamBScore > teamAScore + (rounds - turnoA)) {
           addMessage(`${teamB} gana!`);
           setMatchResult(`Resultado final: ${teamA} ${teamAScore} - ${teamBScore} ${teamB}`);
-          clearInterval(intervalId);
           setIsRunning(false);
           return;
         }
@@ -180,15 +315,16 @@ const Penalties: React.FC = () => {
         const teamBScored = penaltyShot();
         const restantesB = rounds - turnoB;
         if (teamBScored) teamBScore++;
+        
         addMessage(`${teamB} ${teamBScored ? "gol" : "erra"}! Total: ${teamBScore}. Restantes: ${restantesB}`);
         
         // Actualizar tabla de penales
         updatePenaltyResult('teamB', teamBScored, turnoB - 1);
   
+        // Verificar si el equipo B ya ganó matemáticamente
         if (teamBScore > teamAScore + (rounds - turnoA)) {
           addMessage(`${teamB} gana!`);
           setMatchResult(`Resultado final: ${teamA} ${teamAScore} - ${teamBScore} ${teamB}`);
-          clearInterval(intervalId);
           setIsRunning(false);
           return;
         }
@@ -203,7 +339,6 @@ const Penalties: React.FC = () => {
           const ganador = teamAScore > teamBScore ? teamA : teamB;
           addMessage(`${ganador} gana!`);
           setMatchResult(`Resultado final: ${teamA} ${teamAScore} - ${teamBScore} ${teamB}`);
-          clearInterval(intervalId);
           setIsRunning(false);
           return;
         } else {
@@ -214,6 +349,7 @@ const Penalties: React.FC = () => {
   
         const teamAScored = penaltyShot();
         if (teamAScored) teamAScore++;
+        
         addMessage(`${teamA} ${teamAScored ? "gol" : "erra"}! Total: ${teamAScore}`);
         
         // Actualizar tabla de penales
@@ -224,6 +360,7 @@ const Penalties: React.FC = () => {
       } else if (estado === "SuddenB") {
         const teamBScored = penaltyShot();
         if (teamBScored) teamBScore++;
+        
         addMessage(`${teamB} ${teamBScored ? "gol" : "erra"}! Total: ${teamBScore}`);
         
         // Actualizar tabla de penales
@@ -233,14 +370,26 @@ const Penalties: React.FC = () => {
           const ganador = teamAScore > teamBScore ? teamA : teamB;
           addMessage(`${ganador} gana!`);
           setMatchResult(`Resultado final: ${teamA} ${teamAScore} - ${teamBScore} ${teamB}`);
-          clearInterval(intervalId);
           setIsRunning(false);
+          return;
         } else {
           suddenDeathRound++;
           estado = "SuddenA";
         }
       }
-    }, interval); // Usando el intervalo seleccionado
+      
+      // Programar el siguiente paso
+      setTimeout(nextStep, interval);
+    };
+    
+    // Iniciar la tanda
+    setTimeout(nextStep, interval);
+    
+    // Guardar la función para continuar después del tiro del usuario
+    continueShootoutRef = () => {
+      waitingForUser = false;
+      setTimeout(nextStep, interval);
+    };
   };
 
   const handleIntervalChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -253,6 +402,18 @@ const Penalties: React.FC = () => {
 
   const handleTeamBChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTeamB(e.target.value);
+  };
+
+  const handleUserWillShootChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setUserWillShoot(e.target.value === "true");
+  };
+
+  const handleUserTeamChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setUserTeam(e.target.value);
+  };
+
+  const handleUserRoundChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setUserRound(e.target.value);
   };
 
   // Renderiza el resultado de un penal
@@ -299,15 +460,78 @@ const Penalties: React.FC = () => {
             <option value="8000">Muy lento (8s)</option>
           </select>
         </div>
+        
+        {/* Opciones del usuario para participar */}
+        <div className="user-settings">
+          <div>
+            <label>Patear penal </label>
+            <select 
+              value={userWillShoot.toString()} 
+              onChange={handleUserWillShootChange}
+              disabled={isRunning}
+            >
+              <option value="false">No</option>
+              <option value="true">Sí</option>
+            </select>
+          </div>
+          
+          {userWillShoot && (
+            <>
+              <div>
+                <label>Elegir equipo</label>
+                <select 
+                  value={userTeam} 
+                  onChange={handleUserTeamChange}
+                  disabled={isRunning}
+                >
+                  <option value="teamA">{teamA}</option>
+                  <option value="teamB">{teamB}</option>
+                </select>
+              </div>
+              
+              <div>
+                <label>Elegir ronda</label>
+                <select 
+                  value={userRound} 
+                  onChange={handleUserRoundChange}
+                  disabled={isRunning}
+                >
+                  <option value="random">Aleatorio</option>
+                  {[...Array(11)].map((_, index) => (
+                    <option key={index + 1} value={index + 1}>{index + 1}</option>
+                  ))}
+                </select>
+              </div>
+            </>
+          )}
+        </div>
       </div>
       
       <button 
         className="start-button" 
         onClick={penaltyShootout} 
-        disabled={isRunning}
+        disabled={isRunning && !isUserTurn}
       >
         Iniciar Tanda de Penales
       </button>
+      
+      {/* Opciones para el tiro del usuario */}
+      {userShotOptions && (
+        <div className="user-shot-options">
+          <h3>¡Tu turno! Elegir dirección del tiro:</h3>
+          <div className="goal-grid">
+            {[...Array(6)].map((_, index) => (
+              <button 
+                key={index + 1} 
+                className="shot-position"
+                onClick={() => handleUserShot(index + 1)}
+              >
+                {index + 1}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
       
       {(penaltyRounds.length > 0 || isRunning) && (
         <div className="penalties-table-container">
@@ -358,14 +582,7 @@ const Penalties: React.FC = () => {
           <h2>{matchResult}</h2>
         </div>
       )}
-      
-{/*       <div className="penalty-log">
-        {messages.map((msg, index) => (
-          <div key={index} className="penalty-message">
-            {msg}
-          </div>
-        ))}
-      </div> */}
+
     </div>
   );
 };
