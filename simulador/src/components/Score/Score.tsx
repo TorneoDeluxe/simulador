@@ -11,31 +11,62 @@ interface Chance {
 
 const Score = () => {
     const teams = [
-        { name: "Aldosivi", media: 66, logo: "" },
+
+        //    MdC
+        { name: "Barcelona", media: 88, logo: "" },
+        { name: "Liverpool", media: 87, logo: "" },
+        { name: "Bayern Munich", media: 90, logo: "" },
+        { name: "Juventus", media: 83, logo: "" },
+        { name: "Paris Saint-Germain", media: 87, logo: "" },
+        //{ name: "Real Madrid", media: 90, logo: "" },
+        { name: "Manchester City", media: 92, logo: "" },
+        { name: "Benfica", media: 81, logo: "" },
+        { name: "River Plate", media: 82, logo: "" },
+        { name: "Flamengo", media: 83, logo: "" },
+        { name: "Estudiantes LP", media: 77, logo: "" },
+        { name: "Sao Paulo", media: 76, logo: "" },
+        { name: "San Lorenzo", media: 78, logo: "" },
+        { name: "Atlético Nacional", media: 75, logo: "" },
+        { name: "Deportivo Cali", media: 71, logo: "" },
+        { name: "Inter Miami", media: 80, logo: "" },
+        { name: "América", media: 75, logo: "" },
+        { name: "Pachuca", media: 73, logo: "" },
+        { name: "CF Montreal", media: 72, logo: "" },
+        { name: "Seattle Sounders", media: 75, logo: "" },
+        { name: "Zamalek", media: 74, logo: "" },
+        { name: "Wydad Casablanca", media: 74, logo: "" },
+        { name: "Al Ahly", media: 75, logo: "" },
+        { name: "Mazembe", media: 70, logo: "" },
+        { name: "Al-Hilal", media: 82, logo: "" },
+        { name: "Al-Ittihad", media: 80, logo: "" },
+        { name: "Al-Nassr", media: 81, logo: "" },
+        { name: "Al-Ain", media: 75, logo: "" },
+        { name: "Al-Sadd", media: 76, logo: "" },
+        { name: "Yokohama Marinos", media: 72, logo: "" },
+        { name: "Auckland City", media: 62, logo: "" },
+        { name: "Lautoka", media: 49, logo: "" },
+        //
+        //
+        { name: "All Boys", media: 65, logo: "" },
         { name: "Almagro", media: 64, logo: "" },
+        { name: "Argentinos Juniors", media: 72, logo: "" },
         { name: "Arsenal de Sarandí", media: 67, logo: "" },
         { name: "Atlanta", media: 63, logo: "" },
-        { name: "Atlético Tucumán", media: 68, logo: "" },
+        { name: "Atlético de Rafaela", media: 65, logo: "" },
         { name: "Chacarita", media: 67, logo: "" },
-        { name: "Defensa y Justicia", media: 72, logo: "" },
+        { name: "Colón", media: 70, logo: "" },
         { name: "Ferro", media: 66, logo: "" },
         { name: "Gimnasia de Jujuy", media: 63, logo: "" },
         { name: "Godoy Cruz", media: 70, logo: "" },
+        { name: "Huracán", media: 71, logo: "" },
         { name: "Instituto", media: 65, logo: "" },
-        { name: "Nueva Chicago", media: 64, logo: "" },
-        { name: "Patronato", media: 65, logo: "" },
-        { name: "Platense", media: 68, logo: "" },
         { name: "Quilmes", media: 67, logo: "" },
+        { name: "San Martín (SJ)", media: 66, logo: "" },
         { name: "Sarmiento (J)", media: 66, logo: "" },
         { name: "Temperley", media: 67, logo: "" },
         { name: "Tigre", media: 68, logo: "" },
         { name: "Real Madrid", logo: "team1logo.png", media: 90 },
-        { name: "Sevilla", logo: "team2logo.png", media: 82 },
-        { name: "Barcelona", logo: "team3logo.png", media: 87 },
-        { name: "Atlético Madrid", logo: "team4logo.png", media: 85 },
-        { name: "Gibraltar", logo: "team4logo.png", media: 40 },
-        { name: "Tuvalu", logo: "team4logo.png", media: 25 },
-        { name: "San Lorenzo", logo: "team4logo.png", media: 70 },
+        { name: "Sevilla", logo: "team2logo.png", media: 82 }
     ];
 
     const handleTeam1Change = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -284,6 +315,12 @@ const Score = () => {
         const mediaDifference = Math.abs(media1 - media2);
         let disparity;
         let base1, base2;
+
+        //avgChances está seteado en 18, pero cada 7 puntos de diferencia, se le suma 2 chances.
+        function getBonusChances(mediaDifference: number) {
+            return Math.floor(mediaDifference / 7) * 2;
+        }
+        avgChances += getBonusChances(mediaDifference);
     
         if (lowerMedia >= 77) {
             disparity = 1.05;
@@ -356,7 +393,7 @@ const Score = () => {
         };
     }
     
-    let avgChances = 20;
+    let avgChances = 18;
   
     return (
         <div>
