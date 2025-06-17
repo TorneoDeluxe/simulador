@@ -1,47 +1,51 @@
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 .selector-equipos {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin-left: 2%;
-  margin-right: 2%;
+  margin-left: 1%;
+  margin-right: 1%;
 }
 
 .ligas-navegacion {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  gap: 1rem;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.nombre-liga {
+  flex-grow: 1;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1rem;
 }
 
 .equipos-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(75px, 1fr));
+  gap: 0.8rem;
 }
 
 .equipo-card {
   display: flex;
+  height: 6rem;
   flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  align-content: space-between;
   cursor: pointer;
-  border: 2px solid #ddb504;
+  border: 1.5px solid #ddb504;
   border-radius: 0.9rem;
   text-align: center;
   background-color: black;
   color: white;
-  padding: 10px;
+  padding: 5px;
+  padding-top: 8px;
+}
+
+.media {
+  font-size: 13px;
+  font-weight: bold;
+  margin-top: auto;
 }
 
 .equipos-seleccionados {
@@ -55,17 +59,22 @@
 }
 
 .escudos{
-  height: 85px;
-  width: 85px;
-  margin-top: 10%;
+  height: 35px;
+  width: 35px;
 }
 
 .text{
   font-weight: bold;
 }
 
-.name{
-  font-size: 15px;
+.name {
+  font-size: 10.5px;
+  height: 1.8em; /* fuerza espacio para dos líneas */
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .media{

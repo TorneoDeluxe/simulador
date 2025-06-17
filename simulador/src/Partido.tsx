@@ -1,23 +1,101 @@
 // src/pages/Partido.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import SelectorEquipos from "./components/SelectorEquipos/SelectorEquipos";
+import "./components/Partido.css";
+
+type Liga = {
+  id: number;
+  nombre: string;
+  paisId: number;
+  categoria: number;
+  cantidadEquipos: number;
+};
+
+type Equipo = {
+  id: number;
+  nombre: string;
+  media: number;
+  ligaId: number;
+  paisId: number;
+};
 
 const Partido: React.FC = () => {
   const navigate = useNavigate();
-  const [equipos, setEquipos] = useState<{ local: any; visitante: any } | null>(null);
+  const [equipoLocal, setEquipoLocal] = useState<any | null>(null);
+  const [equipoVisitante, setEquipoVisitante] = useState<any | null>(null);
+  const [ligas, setLigas] = useState<Liga[]>([]);
+  const [equipos, setEquipos] = useState<Equipo[]>([]);
+  const [ligasConEquipos, setLigasConEquipos] = useState<any[]>([]);
 
-  const handleEquiposSeleccionados = (local: any, visitante: any) => {
-    setEquipos({ local, visitante });
-  };
-
+  useEffect(() => {
+    const fetchEquipos = async () => {
+      try {
+        const response = await fetch("https://localhost:7225/api/equipos");
+        const data = await response.json();
+        console.log("Datos de equipos recibidos:", data);
+        return data; // 👈 Retornar los datos
+      } catch (error) {
+        console.error("Error al cargar equipos:", error);
+        return []; // 👈 En caso de error, retornar array vacío
+      }
+    };
+  
+    const fetchLigas = async () => {
+      try {
+        const response = await fetch("https://localhost:7225/api/ligas");
+        const data = await response.json();
+        console.log("Datos de ligas recibidos:", data);
+        return data; // 👈 Retornar los datos
+      } catch (error) {
+        console.error("Error al cargar ligas:", error);
+        return [];
+      }
+    };
+  
+    const cargarDatos = async () => {
+      const ligasResponse = await fetchLigas();
+      const equiposResponse = await fetchEquipos();
+  
+      setLigas(ligasResponse);
+      setEquipos(equiposResponse);
+    };
+  
+    cargarDatos();
+  }, []);
+  
+  useEffect(() => {
+    if (ligas.length > 0 && equipos.length > 0) {
+      const resultado = ligas.map((liga) => {
+        const equiposDeEstaLiga = equipos
+          .filter((equipo) => equipo.ligaId === liga.id)
+          .map((equipo) => ({
+            name: equipo.nombre,
+            media: equipo.media,
+            logo: generateLogoPath(equipo.nombre),
+          }));
+  
+        return {
+          name: liga.nombre,
+          teams: equiposDeEstaLiga,
+        };
+      });
+  
+      setLigasConEquipos(resultado);
+    }
+  }, [ligas, equipos]);
+  
+  
   const jugarPartido = () => {
-    if (equipos) {
-      navigate("/partido/simulacion", { state: { local: equipos.local, visitante: equipos.visitante } });
+    if (equipoLocal && equipoVisitante) {
+      navigate("/partido/simulacion", {
+        state: { local: equipoLocal, visitante: equipoVisitante },
+      });
     } else {
       alert("Por favor selecciona ambos equipos.");
     }
   };
+
   const generateLogoPath = (name: string) => {
     const basePath = "src/assets/Escudos";
     return `${basePath}/${name.replace(/\s+/g, "_").replace(/[()]/g, "")}.png`;
@@ -26,117 +104,49 @@ const Partido: React.FC = () => {
   return (
     <div>
       <h1>Elegir equipos</h1>
-      <SelectorEquipos
-        ligas={[
-          {
-            name: "Primera División Argentina",
-            teams: [
-                { name: "Argentinos Juniors", media: 71 },
-                { name: "Banfield", media: 70 },
-                { name: "Belgrano", media: 69 },
-                { name: "Boca Juniors", media: 79 },
-                { name: "Colón", media: 68 },     
-                { name: "Estudiantes LP", media: 75 },
-                { name: "Gimnasia LP", media: 70 },
-                { name: "Huracán", media: 69 },
-                { name: "Independiente", media: 76 },
-                { name: "Lanús", media: 72 },
-                { name: "Newell's", media: 73 },
-                { name: "Rosario Central", media: 73 },
-                { name: "River Plate", media: 81 },
-                { name: "San Lorenzo", media: 70 },
-                { name: "Racing", media: 77 },
-                { name: "Talleres", media: 71 },
-                { name: "Unión", media: 68 },
-                { name: "Vélez Sarsfield", media: 74 },
-                //Este array se va a reemplazar por la response de la llamada al endpoint de Primera, y así con cada liga.
-            ].map((team) => ({
-              ...team,
-              logo: generateLogoPath(team.name),
-            })),
-          },
-          {
-            name: "Primera B Nacional",
-            teams: [
-              { name: "Aldosivi", media: 66 },
-              { name: "Almagro", media: 64 },
-              { name: "Arsenal de Sarandí", media: 67 },
-              { name: "Atlanta", media: 63 },
-              { name: "Atlético Tucumán", media: 68 },
-              { name: "Chacarita", media: 67 },
-              { name: "Defensa y Justicia", media: 72 },
-              { name: "Ferro", media: 66 },
-              { name: "Gimnasia de Jujuy", media: 63 },
-              { name: "Godoy Cruz", media: 70 },
-              { name: "Instituto", media: 65 },
-              { name: "Nueva Chicago", media: 64 },
-              { name: "Patronato", media: 65 },
-              { name: "Platense", media: 68 },
-              { name: "Quilmes", media: 67 },
-              { name: "Sarmiento (J)", media: 66 },
-              { name: "Temperley", media: 67 },
-              { name: "Tigre", media: 68 },
-            ].map((team) => ({
-              ...team,
-              logo: generateLogoPath(team.name),
-            })),
-          },
-          {
-            name: "Internacional",
-            teams: [
-              { name: "Gibraltar", media: 40 },
-              { name: "Tuvalu", media: 25 },
-            ].map((team) => ({
-              ...team,
-              logo: generateLogoPath(team.name),
-            })),
-          },
-          {
-            name: "La Liga",
-            teams: [
-              { name: "Real Madrid", media: 90 },
-              { name: "Sevilla", media: 82 },
-              { name: "Barcelona", media: 87 },
-              { name: "Atlético Madrid", media: 85 },
-            ].map((team) => ({
-              ...team,
-              logo: generateLogoPath(team.name),
-            })),
-          },
-          {
-            name: "Premier League",
-            teams: [
-              { name: "Arsenal", media: 88 },
-              { name: "Aston Villa", media: 82 },
-              { name: "Bournemouth", media: 79 },
-              { name: "Brentford", media: 79 },
-              { name: "Brighton", media: 81 },
-              { name: "Chelsea", media: 84 },
-              { name: "Crystal Palace", media: 78 },
-              { name: "Everton", media: 78 },
-              { name: "Fulham", media: 78 },
-              { name: "Ipswich Town", media: 73 },
-              { name: "Leicester", media: 77 },
-              { name: "Liverpool", media: 89 },
-              { name: "Newcastle United", media: 82 },
-              { name: "Nottingham Forest", media: 80 },
-              { name: "Manchester City", media: 92 },
-              { name: "Manchester United", media: 83 },
-              { name: "Southampton", media: 75 },
-              { name: "Tottenham", media: 85 },
-              { name: "West Ham", media: 80 },
-              { name: "Wolverhampton", media: 78 },
-            ].map((team) => ({
-              ...team,
-              logo: generateLogoPath(team.name),
-            })),
-          },
-        ]}
-        onSelectedTeams={(local, visitante) => handleEquiposSeleccionados(local, visitante)}
-      />
-      <button onClick={jugarPartido} className="btn btn-primary">
-        Jugar Partido
-      </button>
+
+      <div className="partido-container">
+        <div className="selector-local">
+          <h5>Equipo Local</h5>
+          {ligasConEquipos.length > 0 && (
+            <SelectorEquipos ligas={ligasConEquipos} onSelectedTeam={setEquipoLocal} />
+          )}
+        </div>
+
+        <div className="seleccion-resumen">
+          <div className="equipo-resumen">
+            {equipoLocal && (
+              <div className="equipo-detalle">
+                <img src={equipoLocal.logo} alt={equipoLocal.name} className="escudo-grande" />
+                <div className="nombre">{equipoLocal.name}</div>
+                <div className="media">{equipoLocal.media}</div>
+              </div>
+            )}
+          </div>
+
+          <div className="equipo-resumen">
+            {equipoVisitante && (
+              <div className="equipo-detalle">
+                <img src={equipoVisitante.logo} alt={equipoVisitante.name} className="escudo-grande" />
+                <div className="nombre">{equipoVisitante.name}</div>
+                <div className="media">{equipoVisitante.media}</div>
+              </div>
+            )}
+          </div>
+
+          <button className="btn-jugar" onClick={jugarPartido} disabled={!equipoLocal || !equipoVisitante}>
+            Jugar
+          </button>
+        </div>
+
+        <div className="selector-visitante">
+            <h5>Equipo Visitante</h5>
+            {ligasConEquipos.length > 0 && (
+              <SelectorEquipos ligas={ligasConEquipos} onSelectedTeam={setEquipoVisitante} />
+            )}
+        </div>
+
+      </div>
     </div>
   );
 };

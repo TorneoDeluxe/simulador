@@ -8,30 +8,6 @@ import Score from './components/Score/Score.tsx';
 import Penalties from './components/Penalties.tsx';
 
 const App: React.FC = () =>  {
-
-  useEffect(() => {
-    const fetchEquipos = async () => {
-      try {
-        const response = await fetch("https://localhost:7225/api/equipos");
-        const data = await response.json();
-        console.log("Datos recibidos:", data);
-      } catch (error) {
-        console.error("Error al cargar ligas:", error);
-      }
-    };
-    const fetchLigas = async () => {
-      try {
-        const response = await fetch("https://localhost:7225/api/ligas");
-        const data = await response.json();
-        console.log("Datos recibidos:", data);
-      } catch (error) {
-        console.error("Error al cargar ligas:", error);
-      }
-    };
-    //fetchEquipos();
-    //fetchLigas();
-  }, []);
-
   return (
     <Router>
       <Routes>
