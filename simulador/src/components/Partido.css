@@ -27,24 +27,33 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #000;
+    background-color: #1f8f60;
     color: white;
     border: 2px solid #ddb504;
     border-radius: 1rem;
-    min-height: 160px;
-    width: 100%;
+    min-height: 10rem;
+    width: 50%;
     text-align: center;
+}
+
+.detalle-local{
+    margin-right: 5rem;
+}
+
+.detalle-visitante{
+    margin-left: 5rem;
 }
 
 .escudo-grande {
     width: 80px;
     height: 80px;
     margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
 }
 
 .nombre {
     font-weight: bold;
-    font-size: 0.8rem;
+    font-size: 1rem;
 }
 
 .media {

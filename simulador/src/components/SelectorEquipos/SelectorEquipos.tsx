@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+// src/components/SelectorEquipos/SelectorEquipos.tsx
+import React, { useEffect, useState } from "react";
 import "./SelectorEquipos.css";
 
 interface Team {
@@ -8,8 +9,11 @@ interface Team {
 }
 
 interface League {
-  name: string;
-  teams: Team[];
+  id: number;
+  nombre: string;
+  pais: string;
+  categoria: number;
+  teams?: Team[];
 }
 
 interface Country {
@@ -18,52 +22,122 @@ interface Country {
 }
 
 type Props = {
-  ligas: League[];
   onSelectedTeam: (team: Team) => void;
 };
 
-const SelectorEquipos: React.FC<Props> = ({ ligas,  onSelectedTeam }) => {
-  // tomar los países y pasarlos como props de la misma manera. O pasar solo los países como props y
-  // dentro de ellos las ligas.
-  const [selectedCountryIndex, setSelectedCountryIndex] = useState(0);
+const SelectorEquipos: React.FC<Props> = ({ onSelectedTeam }) => {
+  const [countries, setCountries] = useState<Country[]>([]);
+  const [selectedCountryIndex, setSelectedCountryIndex] = useState(2);
   const [selectedLeagueIndex, setSelectedLeagueIndex] = useState(0);
 
-  const selectedLeague = ligas[selectedLeagueIndex];
+  const selectedCountry = countries[selectedCountryIndex];
+  const selectedLeague = selectedCountry?.leagues[selectedLeagueIndex];
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const ligasResponse = await fetch("https://localhost:7225/api/ligas");
+        const equiposResponse = await fetch("https://localhost:7225/api/equipos");
+
+        const ligas: League[] = await ligasResponse.json();
+        const equipos = await equiposResponse.json();
+
+        const ligasConEquipos: League[] = ligas.map((liga) => ({
+          ...liga,
+          teams: equipos
+            .filter((eq: any) => eq.ligaId === liga.id)
+            .map((eq: any) => ({
+              name: eq.nombre,
+              media: eq.media,
+              logo: generateLogoPath(eq.nombre),
+            })),
+        }));
+
+        const agrupadoPorPais: Country[] = [];
+        ligasConEquipos.forEach((liga) => {
+          const paisExistente = agrupadoPorPais.find((c) => c.name === liga.pais);
+          if (paisExistente) {
+            paisExistente.leagues.push(liga);
+          } else {
+            agrupadoPorPais.push({ name: liga.pais, leagues: [liga] });
+          }
+        });
+
+        agrupadoPorPais.sort((a, b) => a.name.localeCompare(b.name));
+        agrupadoPorPais.forEach((pais) => {
+          pais.leagues.sort((a, b) => a.categoria - b.categoria);
+        });
+
+        setCountries(agrupadoPorPais);
+      } catch (error) {
+        console.error("Error al cargar datos:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const generateLogoPath = (name: string) => {
+    const basePath = "src/assets/Escudos";
+    return `${basePath}/${name.replace(/\s+/g, "_").replace(/[()]/g, "")}.png`;
+  };
 
   const handleSeleccion = (equipo: Team) => {
     onSelectedTeam(equipo);
   };
 
+  const siguientePais = () => {
+    setSelectedCountryIndex((prev) => (prev + 1) % countries.length);
+    setSelectedLeagueIndex(0);
+  };
+
+  const anteriorPais = () => {
+    setSelectedCountryIndex((prev) => (prev - 1 + countries.length) % countries.length);
+    setSelectedLeagueIndex(0);
+  };
+
   const siguienteLiga = () => {
-    setSelectedLeagueIndex((prev) => (prev + 1) % ligas.length);
+    if (!selectedCountry) return;
+    setSelectedLeagueIndex((prev) => (prev + 1) % selectedCountry.leagues.length);
   };
 
   const anteriorLiga = () => {
-    setSelectedLeagueIndex((prev) => (prev - 1 + ligas.length) % ligas.length);
+    if (!selectedCountry) return;
+    setSelectedLeagueIndex((prev) => (prev - 1 + selectedCountry.leagues.length) % selectedCountry.leagues.length);
   };
 
   return (
     <div className="selector-equipos">
+      {/* Navegación de países */}
+      <div className="paises-navegacion">
+        <button onClick={anteriorPais} disabled={countries.length <= 1}>{"<"}</button>
+        <span>{selectedCountry?.name}</span>
+        <button onClick={siguientePais} disabled={countries.length <= 1}>{">"}</button>
+      </div>
+
       {/* Navegación de ligas */}
       <div className="ligas-navegacion">
         <button onClick={anteriorLiga}>{"<"}</button>
-        <span>{selectedLeague.name}</span>
+        <span>{selectedLeague?.nombre}</span>
         <button onClick={siguienteLiga}>{">"}</button>
       </div>
 
       {/* Equipos */}
       <div className="equipos-grid">
-        {selectedLeague.teams.map((equipo) => (
-          <div
-            key={equipo.name}
-            className="equipo-card"
-            onClick={() => handleSeleccion(equipo)}
-          >
-            <img src={equipo.logo} alt={equipo.name} className="escudos" />
-            <span className="text name">{equipo.name}</span>
-            <span className="text media">{equipo.media}</span>
-          </div>
-        ))}
+        {selectedLeague?.teams
+          ?.slice()
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .map((equipo) => (
+            <div
+              key={equipo.name}
+              className="equipo-card"
+              onClick={() => handleSeleccion(equipo)}
+            >
+              <img src={equipo.logo} alt={equipo.name} className="escudos" />
+              <span className="text name">{equipo.name}</span>
+              <span className="text media">{equipo.media}</span>
+            </div>
+          ))}
       </div>
     </div>
   );
