@@ -66,7 +66,9 @@ const Score = () => {
         { name: "Temperley", media: 67, logo: "" },
         { name: "Tigre", media: 68, logo: "" },
         { name: "Real Madrid", logo: "team1logo.png", media: 90 },
-        { name: "Sevilla", logo: "team2logo.png", media: 82 }
+        { name: "Sevilla", logo: "team2logo.png", media: 82 },
+        { name: "Vanuatu", media: 39, logo: "" },
+        { name: "Samoa", media: 30, logo: "" },
     ];
 
     const handleTeam1Change = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -139,35 +141,34 @@ const Score = () => {
         return totalGameTime;
     }
 
-    const simulateChances = (team1: any, team2: any, specialChancesTeam1: number, specialChancesTeam2: number) => {
+    function simulateChances(team1: any, team2: any, specialChancesTeam1: number, specialChancesTeam2: number) {
         const team1Name = team1.name;
         const team2Name = team2.name;
-
-        const chancesData = calculateChancesFromMedia(team1.media, team2.media, avgChances);
+    
+        const chancesData = calculateChancesFromMedia(team1.media, team2.media);
         console.log(chancesData);
-        const team1Chances = Math.floor(Math.random() * (chancesData.range1[1] - chancesData.range1[0] + 1)) 
-        + chancesData.range1[0] + specialChancesTeam1;
-        const team2Chances = Math.floor(Math.random() * (chancesData.range2[1] - chancesData.range2[0] + 1))
-        + chancesData.range2[0] + specialChancesTeam2;
-
-        console.log(team1Name + ": " + (team1Chances - specialChancesTeam1) + " chances.");
-        console.log(team2Name + ": " + (team2Chances - specialChancesTeam2) + " chances.");
-
+    
+        const team1Chances = chancesData.chances1 + specialChancesTeam1;
+        const team2Chances = chancesData.chances2 + specialChancesTeam2;
+    
+        console.log(team1Name + ": " + chancesData.chances1 + " chances.");
+        console.log(team2Name + ": " + chancesData.chances2 + " chances.");
+    
         let team1Shots: any = [];
         let team2Shots: any = [];
         let goals1 = 0;
         let goals2 = 0;
         let result = '';
-
-        for(let i= 0; i < team1Chances; i++){
+    
+        for (let i = 0; i < team1Chances; i++) {
             const isSpecial = i >= team1Chances - specialChancesTeam1;
             let shot: number;
-            if(isSpecial){
+            if (isSpecial) {
                 shot = Math.floor(Math.random() * 3) + 1;
             } else {
                 shot = Math.floor(Math.random() * 6) + 1;
             }
-            if (shot === 1){
+            if (shot === 1) {
                 result = 'Gol';
                 goals1++;
             } else {
@@ -175,27 +176,28 @@ const Score = () => {
             }
             team1Shots.push({ result, team: team1Name, isSpecial });
         }
-
-        for(let i= 0; i < team2Chances; i++){
+    
+        for (let i = 0; i < team2Chances; i++) {
             const isSpecial = i >= team2Chances - specialChancesTeam2;
             let shot: number;
-            if(isSpecial){
+            if (isSpecial) {
                 shot = Math.floor(Math.random() * 3) + 1;
             } else {
                 shot = Math.floor(Math.random() * 6) + 1;
             }
-            if (shot === 1){
+            if (shot === 1) {
                 result = 'Gol';
                 goals2++;
             } else {
                 result = 'Errado';
             }
-            team1Shots.push({ result, team: team2Name, isSpecial });
+            team2Shots.push({ result, team: team2Name, isSpecial });
         }
-        
+    
         const totalChances = team1Shots.concat(team2Shots);
         return totalChances;
     }
+    
 
     const assignMinutes = (minutesPlayed: { number: number; half: string }[]) => {
         const chancesPlayed: Chance[] = simulateChances(team1, team2, specialChancesTeam1, specialChancesTeam2);
@@ -310,90 +312,73 @@ const Score = () => {
         window.location.reload();
     };
 
-    function calculateChancesFromMedia(media1: any, media2: any, avgChances: any) {
-        const lowerMedia = Math.min(media1, media2);
-        const mediaDifference = Math.abs(media1 - media2);
-        let disparity;
-        let base1, base2;
-
-        //avgChances está seteado en 18, pero cada 7 puntos de diferencia, se le suma 2 chances.
-        function getBonusChances(mediaDifference: number) {
-            return Math.floor(mediaDifference / 7) * 2;
-        }
-        avgChances += getBonusChances(mediaDifference);
+    function randomBetween(min: number, max: number): number {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
     
-        if (lowerMedia >= 77) {
-            disparity = 1.05;
-        } else if (lowerMedia > 70) {
-            disparity = 1.1;
-        } else if (lowerMedia > 66) {
-            disparity = 1.2;
-        } else if (lowerMedia > 59) {
-            disparity = 1.5;
-        } else if (lowerMedia >= 53) {
-            disparity = 1.8;
-        } else {
-            disparity = 2.5;
-        }
+    function getTotalChances(mediaDifference: number, lowerMedia: number): number {
+        let minChances = 10;
+        let maxChances = 16;
     
-        // Calcular incremento por diferencia de media
-        let factor;
         if (mediaDifference < 5) {
-            // Para diferencias pequeñas, usamos un divisor mayor
-            factor = 15;
+            minChances = 10;
+            maxChances = 16;
+        } else if (mediaDifference < 10) {
+            minChances = 14;
+            maxChances = 20;
+        } else if (mediaDifference < 20) {
+            minChances = 18;
+            maxChances = 26;
         } else {
-            // Para diferencias más grandes, usamos el divisor original o uno menor
-            factor = 10;
-        }
-        const alpha = (mediaDifference / factor) * disparity;
-        //El 13 es un número mágico para calcular mediante la disparidad, para hallar una base relativamente precisa.
-    
-        let delta;
-        if (disparity <= 1.1){
-            delta = Math.floor(Math.random() * 2) + 1;
-        } else {
-            delta = 1;
-        }
-        //Delta devuelve un valor que es 1 o 2 para que las chances oscilen en ese rango. Si la base es 12 y delta = 2, las chances
-        // estarán entre 10 y 14.
-        let baseHigh = avgChances / 2 + alpha * delta;
-        let baseLow = avgChances / 2 - alpha * delta;
-    
-        if (media1 >= media2) {
-            base1 = baseHigh;
-            base2 = baseLow;
-        } else {
-            base1 = baseLow;
-            base2 = baseHigh;
+            minChances = 22;
+            maxChances = 30;
         }
     
-        const rangeHigh = baseHigh < 0 
-        ? [0, 1] 
-        : [Math.max(0, Math.ceil(baseHigh - delta)), Math.ceil(baseHigh + delta)];
-
-        const rangeLow = baseLow < 0 
-        ? [0, 1] 
-        : (delta === 2 && mediaDifference >= 10
-        ? [Math.max(0, Math.ceil(baseLow - delta)), Math.ceil(baseLow + 1)]
-        : [Math.max(0, Math.ceil(baseLow - delta)), Math.ceil(baseLow + delta)]);
-
-        const range1 = media1 >= media2 ? rangeHigh : rangeLow;
-        const range2 = media1 >= media2 ? rangeLow : rangeHigh;
+        if (lowerMedia <= 50) {
+            maxChances += 10;
+        } else if (lowerMedia <= 65) {
+            maxChances += 6;
+        }
+    
+        return randomBetween(minChances, maxChances);
+    }
+    
+    function calculateChancesFromMedia(media1: number, media2: number) {
+        const mediaDifference = Math.abs(media1 - media2);
+        const lowerMedia = Math.min(media1, media2);
+        const totalChances = getTotalChances(mediaDifference, lowerMedia);
+    
+        let scalingFactor = 60;
+    
+        if (lowerMedia <= 50) scalingFactor = 30;
+        else if (lowerMedia <= 65) scalingFactor = 45;
+        else if (lowerMedia > 85) scalingFactor = 80;
+    
+        let rawAdvantage = Math.min(mediaDifference, 30) / scalingFactor;
+    
+        // 🎲 Aleatoriedad proporcional a la diferencia
+        const randomnessRange = Math.max(0.01, 0.05 - mediaDifference * 0.0015);
+        const randomness = (Math.random() - 0.5) * 2 * randomnessRange;
+        rawAdvantage = Math.max(0, Math.min(0.5, rawAdvantage + randomness));
+    
+        const advantageRatio = media1 === media2
+            ? 0.5
+            : media1 > media2
+                ? 0.5 + rawAdvantage
+                : 0.5 - rawAdvantage;
+    
+        const chances1 = Math.round(totalChances * advantageRatio);
+        const chances2 = totalChances - chances1;
     
         return {
             media1,
             media2,
-            avgChances,
-            disparity,
-            alpha,
-            base1: base1.toFixed(2),
-            base2: base2.toFixed(2),
-            range1,
-            range2,
+            totalChances,
+            chances1,
+            chances2
         };
     }
     
-    let avgChances = 18;
   
     return (
         <div>
