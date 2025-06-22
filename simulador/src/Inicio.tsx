@@ -14,7 +14,7 @@ const Inicio: React.FC = () => {
         </li>
         <li style={{ margin: '10px 0' }}>
           <Link to="/penales" style={{ textDecoration: 'none', fontSize: '18px' }}>
-            Penales (en construcción)
+            Penales
           </Link>
         </li>
         <li style={{ margin: '10px 0' }}>

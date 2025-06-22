@@ -1,18 +1,28 @@
-.selector-container {
-    display: flex;
-    justify-content: space-between;
-    gap: 2rem;
+.titulo{
+    font-size: 1.5rem;
+    font-weight: bold;
+    font-style: italic;
+    text-align: center;
+    color: rgb(214, 118, 9);
+}
+
+.elegir-equipo{
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+    color: rgb(214, 118, 9);
 }
   
 .selector-local, .selector-visitante {
     flex: 1;
+    height: 95vh;
 }
 
 .partido-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 2rem;
+    margin: 0.2rem;
 }
 
 .seleccion-resumen {
@@ -38,10 +48,12 @@
 
 .detalle-local{
     margin-right: 5rem;
+    text-align: center;
 }
 
 .detalle-visitante{
     margin-left: 5rem;
+    text-align: center;
 }
 
 .escudo-grande {
@@ -64,6 +76,7 @@
 
 .btn-jugar {
     background-color: #ddb504;
+    color: black;
     border: none;
     padding: 0.8rem 2rem;
     border-radius: 0.5rem;

@@ -1,12 +1,51 @@
-body{
-    margin-left: 2%;
+*{
+    font-family: "Quantico", sans-serif;
+}
+
+.backbutton{
+    margin-left: 1rem;
+    margin-top: 1rem;
+}
+
+.intro-clubes{
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.team-intro{
+    text-align: center;
+}
+
+.data{
+    text-align: center;
+    font-style: italic;
+    font-weight: bold;
+}
+
+.info{
+    font-size: 2.5rem;
+}
+
+.btn-jugar{
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+    background-color: #ddb504;
+    border: none;
+    padding: 0.8rem 2rem;
+    border-radius: 0.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .score-container {
     display: flex;
     justify-content: center;
-    margin-top: 20px;
+    margin-top: 0.5rem;
     width: 30%;
+    /*border: 2px solid rgb(77, 76, 76);*/
+    margin: auto;
 }
 
 .score-inner {
@@ -66,6 +105,20 @@ body{
 
 .special-chances {
     margin-top: 10px;
+}
+
+.escudo-grande {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.escuditos{
+    display: flex;
+    width: 35px;
+    height: 35px;
+    margin-bottom: 1rem;
 }
 
 /* Animación fadeIn */

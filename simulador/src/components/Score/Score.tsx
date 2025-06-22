@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./Score.css";
 
 interface Chance {
@@ -9,81 +10,34 @@ interface Chance {
     isSpecial?: boolean
 }
 
+interface Team {
+    name: string;
+    logo: string;
+    media: number;
+  }
+
+interface LocationState {
+    local: Team;
+    visitante: Team;
+  }
+
 const Score = () => {
-    const teams = [
+    const location = useLocation();
+    const navigate = useNavigate();
 
-        //    MdC
-        { name: "Barcelona", media: 88, logo: "" },
-        { name: "Liverpool", media: 87, logo: "" },
-        { name: "Bayern Munich", media: 90, logo: "" },
-        { name: "Juventus", media: 83, logo: "" },
-        { name: "Paris Saint-Germain", media: 87, logo: "" },
-        //{ name: "Real Madrid", media: 90, logo: "" },
-        { name: "Manchester City", media: 92, logo: "" },
-        { name: "Benfica", media: 81, logo: "" },
-        { name: "River Plate", media: 82, logo: "" },
-        { name: "Flamengo", media: 83, logo: "" },
-        { name: "Estudiantes LP", media: 77, logo: "" },
-        { name: "Sao Paulo", media: 76, logo: "" },
-        { name: "San Lorenzo", media: 78, logo: "" },
-        { name: "Atlético Nacional", media: 75, logo: "" },
-        { name: "Deportivo Cali", media: 71, logo: "" },
-        { name: "Inter Miami", media: 80, logo: "" },
-        { name: "América", media: 75, logo: "" },
-        { name: "Pachuca", media: 73, logo: "" },
-        { name: "CF Montreal", media: 72, logo: "" },
-        { name: "Seattle Sounders", media: 75, logo: "" },
-        { name: "Zamalek", media: 74, logo: "" },
-        { name: "Wydad Casablanca", media: 74, logo: "" },
-        { name: "Al Ahly", media: 75, logo: "" },
-        { name: "Mazembe", media: 70, logo: "" },
-        { name: "Al-Hilal", media: 82, logo: "" },
-        { name: "Al-Ittihad", media: 80, logo: "" },
-        { name: "Al-Nassr", media: 81, logo: "" },
-        { name: "Al-Ain", media: 75, logo: "" },
-        { name: "Al-Sadd", media: 76, logo: "" },
-        { name: "Yokohama Marinos", media: 72, logo: "" },
-        { name: "Auckland City", media: 62, logo: "" },
-        { name: "Lautoka", media: 49, logo: "" },
-        //
-        //
-        { name: "All Boys", media: 65, logo: "" },
-        { name: "Almagro", media: 64, logo: "" },
-        { name: "Argentinos Juniors", media: 72, logo: "" },
-        { name: "Arsenal de Sarandí", media: 67, logo: "" },
-        { name: "Atlanta", media: 63, logo: "" },
-        { name: "Atlético de Rafaela", media: 65, logo: "" },
-        { name: "Chacarita", media: 67, logo: "" },
-        { name: "Colón", media: 70, logo: "" },
-        { name: "Ferro", media: 66, logo: "" },
-        { name: "Gimnasia de Jujuy", media: 63, logo: "" },
-        { name: "Godoy Cruz", media: 70, logo: "" },
-        { name: "Huracán", media: 71, logo: "" },
-        { name: "Instituto", media: 65, logo: "" },
-        { name: "Quilmes", media: 67, logo: "" },
-        { name: "San Martín (SJ)", media: 66, logo: "" },
-        { name: "Sarmiento (J)", media: 66, logo: "" },
-        { name: "Temperley", media: 67, logo: "" },
-        { name: "Tigre", media: 68, logo: "" },
-        { name: "Real Madrid", logo: "team1logo.png", media: 90 },
-        { name: "Sevilla", logo: "team2logo.png", media: 82 },
-        { name: "Vanuatu", media: 39, logo: "" },
-        { name: "Samoa", media: 30, logo: "" },
-    ];
-
-    const handleTeam1Change = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedTeam = teams.find(team => team.name === event.target.value);
-        if (selectedTeam) {
-            setTeam1(selectedTeam);
-        }
+    const volverAPartido = () => {
+        navigate("/partido", {
+            state: { local, visitante },
+        });
     };
+    const { local, visitante } = location.state as LocationState;
 
-    const handleTeam2Change = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedTeam = teams.find(team => team.name === event.target.value);
-        if (selectedTeam) {
-            setTeam2(selectedTeam);
-        }
+    const generateLogoPath = (name: string) => {
+        const basePath = "/src/assets/Escudos";
+        return `${basePath}/${name.replace(/\s+/g, "_").replace(/[()]/g, "")}.png`;
     };
+    local.logo = generateLogoPath(local.name);
+    visitante.logo = generateLogoPath(visitante.name);
 
     const gameTime: number = 45;
 
@@ -95,8 +49,6 @@ const Score = () => {
     const [specialChancesTeam2, setSpecialChancesTeam2] = useState(0);
     const [goalsTeam1, setGoalsTeam1] = useState(0);
     const [goalsTeam2, setGoalsTeam2] = useState(0);
-    const [team1, setTeam1] = useState({ name: "Real Madrid", logo: "team1logo.png", media: 90 });
-    const [team2, setTeam2] = useState({ name: "Sevilla", logo: "team2logo.png", media: 82 });
     const [displayedChances, setDisplayedChances] = useState<any[]>([]);
 
     const intervalIdRef = useRef<number | null>(null);
@@ -198,9 +150,8 @@ const Score = () => {
         return totalChances;
     }
     
-
     const assignMinutes = (minutesPlayed: { number: number; half: string }[]) => {
-        const chancesPlayed: Chance[] = simulateChances(team1, team2, specialChancesTeam1, specialChancesTeam2);
+        const chancesPlayed: Chance[] = simulateChances(local, visitante, specialChancesTeam1, specialChancesTeam2);
         console.log(chancesPlayed);
         const assignedMinutes = new Set<string>();
     
@@ -288,9 +239,9 @@ const Score = () => {
                 writeChance(chance);
     
                 if (chance.result === "Gol") {
-                    if (chance.team === team1.name) {
+                    if (chance.team === local.name) {
                         setGoalsTeam1((prevGoals) => prevGoals + 1);
-                    } else if (chance.team === team2.name) {
+                    } else if (chance.team === visitante.name) {
                         setGoalsTeam2((prevGoals) => prevGoals + 1);
                     } else {
                         console.error("Hay un error.");
@@ -378,53 +329,53 @@ const Score = () => {
             chances2
         };
     }
-    
   
     return (
         <div>
-            <div>
-                <label htmlFor="match-duration">Duración del partido:</label>
-                <select id="match-duration" onChange={handleMatchDurationChange} disabled={isGameStarted}>
-                    <option value="">Seleccionar:</option>
-                    <option value="0.0017">1 segundo</option>
-                    <option value="0.05">3 segundos</option>
-                    <option value="0.25">15 segundos</option>
-                    <option value="0.5">30 segundos</option>
-                    <option value="1">1 minuto</option>
-                    <option value="2">2 minutos</option>
-                    <option value="5">5 minutos</option>
-                    <option value="10">10 minutos</option>
-                    <option value="15">15 minutos</option>
-                    <option value="20">20 minutos</option>
-                    <option value="30">30 minutos</option>
-                    <option value="45">45 minutos</option>
-                    <option value="60">60 minutos</option>
-                    <option value="full">Partido completo</option>
-                </select>
-
+            <button className="backbutton" onClick={volverAPartido}>Volver</button>
+            <div className="intro-clubes">
+                <div className="team-intro">
+                    <h4>Local</h4>
+                    <img className="escudo-grande" src={local.logo} alt={local.name} />
+                    <h2> {local.name} </h2>
+                    <p>Media: {local.media}</p>
+                </div>
+                <div className="data">
+                    <label htmlFor="match-duration">Duración del partido:</label>
+                    <select id="match-duration" onChange={handleMatchDurationChange} disabled={isGameStarted}>
+                        <option value="">Seleccionar:</option>
+                        <option value="0.0017">1 segundo</option>
+                        <option value="0.05">3 segundos</option>
+                        <option value="0.25">15 segundos</option>
+                        <option value="0.5">30 segundos</option>
+                        <option value="1">1 minuto</option>
+                        <option value="2">2 minutos</option>
+                        <option value="5">5 minutos</option>
+                        <option value="10">10 minutos</option>
+                        <option value="15">15 minutos</option>
+                        <option value="20">20 minutos</option>
+                        <option value="30">30 minutos</option>
+                        <option value="45">45 minutos</option>
+                        <option value="60">60 minutos</option>
+                        <option value="full">Partido completo</option>
+                    </select>
+                    <div className="info">
+                        <p className="timer">{currentMinute}</p>
+                        <p className="result">{goalsTeam1} - {goalsTeam2}</p>
+                    </div>
+                    <button className="btn-jugar" onClick={playMatch} disabled={isGameStarted || matchDuration === null}>
+                        Jugar
+                    </button>
+                </div>
+                <div className="team-intro">
+                    <h4>Visitante</h4>
+                    <img className="escudo-grande" src={visitante.logo} alt={visitante.name} />
+                    <h2> {visitante.name} </h2>
+                    <p>Media: {visitante.media}</p>
+                </div>
             </div>
 
-            <div className="match-header">
-                <h4>{team1.name} vs {team2.name}</h4>
-            </div>
-
-            <div className="team-select">
-                <label htmlFor="team1-select">Seleccionar Equipo 1: </label>
-                <select
-                    id="team1-select"
-                    value={team1.name}
-                    onChange={handleTeam1Change}
-                    disabled={isGameStarted}
-                >
-                    {teams.map((team) => (
-                        <option key={team.name} value={team.name}>
-                            {team.name} - {team.media}
-                        </option>
-                    ))}
-                </select>
-            </div>
-
-            <div className="special-chances">
+            {/* <div className="special-chances">
                 <label>
                     Chances especiales equipo 1:
                     <input
@@ -435,22 +386,6 @@ const Score = () => {
                         onChange={(e) => setSpecialChancesTeam1(parseInt(e.target.value) || 0)}
                     />
                 </label>
-            </div>
-
-            <div className="team-select special-chances">
-                <label htmlFor="team2-select">Seleccionar Equipo 2: </label>
-                <select
-                    id="team2-select"
-                    value={team2.name}
-                    onChange={handleTeam2Change}
-                    disabled={isGameStarted}
-                >
-                    {teams.map((team) => (
-                        <option key={team.name} value={team.name}>
-                            {team.name} - {team.media}
-                        </option>
-                    ))}
-                </select>
             </div>
 
             <div className="special-chances">
@@ -464,33 +399,29 @@ const Score = () => {
                         onChange={(e) => setSpecialChancesTeam2(parseInt(e.target.value) || 0)}
                     />
                 </label>
-            </div>
-
-
-            <h5>{currentMinute}</h5>
-            <h2>{goalsTeam1} - {goalsTeam2}</h2>
-
-            <button onClick={playMatch} disabled={isGameStarted || matchDuration === null}>
-                Jugar
-            </button>
+            </div> */}
 
             <div className="score-container">
+                {/* <div className="escuditos">
+                    <img src={local.logo} alt={local.name} />
+                    <img src={visitante.logo} alt={visitante.name} />
+                </div> */}
                 <div className="score-inner">
                     <ul className="score-list">
                         {displayedChances.map((chance, index) => (
                             <li
                                 key={index}
-                                className={`score-item ${chance.team === team1.name ? 'left' : 'right'}`}
+                                className={`score-item ${chance.team === local.name ? 'left' : 'right'}`}
                             >
                                 <span
-                                    className={`score-text ${chance.isSpecial ? 'special' : ''} ${chance.team === team2.name ? 'align-left' : 'align-right'}`}
+                                    className={`score-text ${chance.isSpecial ? 'special' : ''} ${chance.team === visitante.name ? 'align-left' : 'align-right'}`}
                                 >
-                                    {chance.team === team1.name
+                                    {chance.team === local.name
                                         ? chance.result === "Gol"
-                                            ? `${chance.minute}' 🟢 Gol!`
+                                            ? `${chance.minute}' 🟢 ¡Gol!`
                                             : `${chance.minute}' ❌ Errado`
                                         : chance.result === "Gol"
-                                        ? `Gol! 🟢 ${chance.minute}'`
+                                        ? `¡Gol! 🟢 ${chance.minute}'`
                                         : `Errado ❌ ${chance.minute}'`}
                                 </span>
                             </li>
@@ -499,10 +430,10 @@ const Score = () => {
                 </div>
             </div>
 
-
             {isGameFinished && (
                 <button onClick={resetGame}>Reiniciar</button>
             )}
+            
         </div>
     );
 };

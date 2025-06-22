@@ -1,6 +1,6 @@
 // src/pages/Partido.tsx
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import SelectorEquipos from "./components/SelectorEquipos/SelectorEquipos";
 import "./components/Partido.css";
 
@@ -12,8 +12,10 @@ type Team = {
 
 const Partido: React.FC = () => {
   const navigate = useNavigate();
-  const [equipoLocal, setEquipoLocal] = useState<Team | null>(null);
-  const [equipoVisitante, setEquipoVisitante] = useState<Team | null>(null);
+  const location = useLocation();
+  const state = location.state as { local?: Team; visitante?: Team };
+  const [equipoLocal, setEquipoLocal] = useState<Team | null>(state?.local ?? null);
+  const [equipoVisitante, setEquipoVisitante] = useState<Team | null>(state?.visitante ?? null);  
 
   const jugarPartido = () => {
     if (equipoLocal && equipoVisitante) {
@@ -27,12 +29,14 @@ const Partido: React.FC = () => {
 
   return (
     <div>
-      <h1>Elegir equipos</h1>
-
+      <div className="titulo">
+        <span>Elegir equipos</span>
+      </div>
+      
       <div className="partido-container">
         {/* Selector de equipo local */}
         <div className="selector-local">
-          <h5>Equipo Local</h5>
+          <h5 className="elegir-equipo">Local</h5>
           <SelectorEquipos onSelectedTeam={setEquipoLocal} />
         </div>
 
@@ -40,32 +44,32 @@ const Partido: React.FC = () => {
         <div className="seleccion-resumen">
           <div className="equipo-resumen">
             {equipoLocal && (
-              <div className="equipo-detalle">
+              <div className="equipo-detalle detalle-local">
                 <img src={equipoLocal.logo} alt={equipoLocal.name} className="escudo-grande" />
                 <div className="nombre">{equipoLocal.name}</div>
                 <div className="media">{equipoLocal.media}</div>
               </div>
             )}
           </div>
+          
+          <button className="btn-jugar" onClick={jugarPartido} disabled={!equipoLocal || !equipoVisitante}>
+            Jugar
+          </button>
 
           <div className="equipo-resumen">
             {equipoVisitante && (
-              <div className="equipo-detalle">
+              <div className="equipo-detalle detalle-visitante">
                 <img src={equipoVisitante.logo} alt={equipoVisitante.name} className="escudo-grande" />
                 <div className="nombre">{equipoVisitante.name}</div>
                 <div className="media">{equipoVisitante.media}</div>
               </div>
             )}
           </div>
-
-          <button className="btn-jugar" onClick={jugarPartido} disabled={!equipoLocal || !equipoVisitante}>
-            Jugar
-          </button>
         </div>
 
         {/* Selector de equipo visitante */}
         <div className="selector-visitante">
-          <h5>Equipo Visitante</h5>
+          <h5 className="elegir-equipo">Visitante</h5>
           <SelectorEquipos onSelectedTeam={setEquipoVisitante} />
         </div>
       </div>
