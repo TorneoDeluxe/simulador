@@ -363,9 +363,14 @@ const Score = () => {
                         <p className="timer">{currentMinute}</p>
                         <p className="result">{goalsTeam1} - {goalsTeam2}</p>
                     </div>
-                    <button className="btn-jugar" onClick={playMatch} disabled={isGameStarted || matchDuration === null}>
-                        Jugar
-                    </button>
+                    {!isGameFinished ? (
+                        <button
+                            className="btn-jugar" onClick={playMatch}
+                            disabled={isGameStarted || matchDuration === null}
+                        >Jugar</button>
+                    ) : (
+                        <button className="btn-jugar" onClick={resetGame}>Reiniciar</button>
+                    )}
                 </div>
                 <div className="team-intro">
                     <h4>Visitante</h4>
@@ -429,10 +434,6 @@ const Score = () => {
                     </ul>
                 </div>
             </div>
-
-            {isGameFinished && (
-                <button onClick={resetGame}>Reiniciar</button>
-            )}
             
         </div>
     );

@@ -29,6 +29,7 @@
 .btn-jugar{
     display: flex;
     flex-direction: column;
+    margin: auto;
     margin-bottom: 1rem;
     background-color: #ddb504;
     border: none;
