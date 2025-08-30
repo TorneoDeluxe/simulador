@@ -76,8 +76,9 @@
 
 .score-text {
     padding: 5px 10px;
-    background-color: #f1f1f1;
+    background-color: #111111ff;
     border-radius: 5px;
+    border: 2px solid #464444ff;
     max-width: 70%;
     word-wrap: break-word;
 }
@@ -105,6 +106,14 @@
 
 .special-chances {
     margin-top: 10px;
+    margin-left: 4vw;
+    /* border: 2px solid #111111ff; */
+}
+
+.special-chances-input{
+    width: 4.5vw;
+    text-align: center;
+    margin-left: 1vw;
 }
 
 .escudo-grande {

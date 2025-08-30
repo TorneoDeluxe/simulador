@@ -357,7 +357,7 @@ const Score = () => {
                         <option value="30">30 minutos</option>
                         <option value="45">45 minutos</option>
                         <option value="60">60 minutos</option>
-                        <option value="full">Partido completo</option>
+                        <option value="93">Partido completo</option>
                     </select>
                     <div className="info">
                         <p className="timer">{currentMinute}</p>
@@ -375,13 +375,13 @@ const Score = () => {
                 </div>
             </div>
 
-            {/* <div className="special-chances">
+            <div className="special-chances">
                 <label>
                     Chances especiales equipo 1:
-                    <input
+                    <input className="special-chances-input"
                         type="number"
                         min="0"
-                        max="15"
+                        max="25"
                         value={specialChancesTeam1}
                         onChange={(e) => setSpecialChancesTeam1(parseInt(e.target.value) || 0)}
                     />
@@ -391,15 +391,15 @@ const Score = () => {
             <div className="special-chances">
                 <label>
                     Chances especiales equipo 2:
-                    <input
+                    <input className="special-chances-input"
                         type="number"
                         min="0"
-                        max="15"
+                        max="25"
                         value={specialChancesTeam2}
                         onChange={(e) => setSpecialChancesTeam2(parseInt(e.target.value) || 0)}
                     />
                 </label>
-            </div> */}
+            </div>
 
             <div className="score-container">
                 {/* <div className="escuditos">

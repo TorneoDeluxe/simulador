@@ -1,12 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import './Inicio.css';
 
 const Inicio: React.FC = () => {
   return (
     <div style={{ textAlign: 'center', marginTop: '50px' }}>
       <h1>Simulador de Partidos</h1>
       <p>Seleccioná una opción para comenzar:</p>
-      <ul style={{ listStyle: 'none', padding: 0 }}>
+      <ul className='lista-inicio' style={{ listStyle: 'none', padding: 0 }}>
         <li style={{ margin: '10px 0' }}>
           <Link to="/partido" style={{ textDecoration: 'none', fontSize: '18px' }}>
             Partido
