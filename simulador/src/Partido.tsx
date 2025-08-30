@@ -27,8 +27,13 @@ const Partido: React.FC = () => {
     }
   };
 
+  const volverAInicio = () => {
+      navigate("/");
+  }
+
   return (
     <div>
+      <button className="backbutton" onClick={volverAInicio}>Volver a Inicio</button>
       <div className="titulo">
         <span>Elegir equipos</span>
       </div>
