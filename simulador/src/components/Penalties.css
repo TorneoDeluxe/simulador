@@ -6,13 +6,20 @@
   padding: 20px;
 }
 
+.backbutton{
+  margin-left: 1rem;
+}
+
+h1{
+  text-align: center;
+}
+
 .settings {
   display: flex;
   flex-direction: column;
   gap: 15px;
   margin-bottom: 20px;
   padding: 15px;
-  border: 1px solid #ccc;
   border-radius: 5px;
 }
 
@@ -30,7 +37,6 @@ input, select {
   padding: 8px;
   margin-left: 5px;
   border-radius: 4px;
-  border: 1px solid #ccc;
 }
 
 .start-button {
@@ -45,7 +51,6 @@ input, select {
 }
 
 .start-button:disabled {
-  background-color: #cccccc;
   cursor: not-allowed;
 }
 
@@ -54,7 +59,6 @@ input, select {
   margin: 20px 0;
   padding: 10px;
   border-radius: 5px;
-  background-color: #f0f0f0;
 }
 
 .penalties-table-container {
@@ -74,11 +78,9 @@ input, select {
 .penalties-table td {
   text-align: center;
   padding: 12px 8px;
-  border: 1px solid #ddd;
 }
 
 .penalties-table th {
-  background-color: #f4f4f4;
   font-weight: bold;
   border-bottom: 2px solid #333;
 }
@@ -96,15 +98,10 @@ input, select {
 .penalties-table .penalty-total {
   width: 15%;
   font-weight: bold;
-  background-color: #f4f4f4;
 }
 
 .penalties-table .penalty-result {
   font-size: 20px;
-}
-
-.penalties-table .current-round {
-  background-color: #fff8dc;
 }
 
 .penalty-scored {
@@ -131,25 +128,21 @@ input, select {
 }
 
 .penalty-log {
-  border: 1px solid #ddd;
   padding: 15px;
   height: 200px;
   overflow-y: auto;
   margin-top: 20px;
   border-radius: 5px;
-  background-color: #f9f9f9;
 }
 
 .penalty-message {
   margin: 5px 0;
   padding: 5px;
-  border-bottom: 1px solid #eee;
 }
 
 .user-shot-options {
   margin: 20px 0;
   padding: 15px;
-  background-color: #f0f0f0;
   border-radius: 8px;
   text-align: center;
 }
@@ -185,9 +178,7 @@ input, select {
   gap: 10px;
   margin-top: 15px;
   padding: 10px;
-  border: 1px solid #ddd;
   border-radius: 4px;
-  background-color: #f9f9f9;
 }
 
 .messages-container {

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Penalties.css';
 
 interface PenaltyRound {
@@ -7,6 +8,7 @@ interface PenaltyRound {
 }
 
 const Penalties: React.FC = () => {
+  const navigate = useNavigate();
   const positions = 6;
   const possibilities = 20;
   let scored: boolean;
@@ -424,165 +426,171 @@ const Penalties: React.FC = () => {
     return result ? <span className="penalty-scored">✅</span> : <span className="penalty-missed">❌</span>;
   };
 
+  const volverAInicio = () => {
+    navigate("/");
+  }
+
   return (
-    <div className="penalties-container">
+    <div>
+      <button className="backbutton" onClick={volverAInicio}>Volver a Inicio</button>
       <h1>Tanda de Penales</h1>
-      
-      <div className="settings">
-        <div className="teams-input">
-          <div>
-            <label>Equipo Local: </label>
-            <input 
-              type="text" 
-              value={teamA} 
-              onChange={handleTeamAChange} 
-              disabled={isRunning}
-            />
+      <div className="penalties-container">
+        <div className="settings">
+          <div className="teams-input">
+            <div>
+              <label>Equipo Local: </label>
+              <input 
+                type="text" 
+                value={teamA} 
+                onChange={handleTeamAChange} 
+                disabled={isRunning}
+              />
+            </div>
+            <div>
+              <label>Equipo Visitante: </label>
+              <input 
+                type="text" 
+                value={teamB} 
+                onChange={handleTeamBChange} 
+                disabled={isRunning}
+              />
+            </div>
           </div>
-          <div>
-            <label>Equipo Visitante: </label>
-            <input 
-              type="text" 
-              value={teamB} 
-              onChange={handleTeamBChange} 
-              disabled={isRunning}
-            />
-          </div>
-        </div>
-        
-        <div className="interval-select">
-          <label>Velocidad de la simulación: </label>
-          <select value={interval} onChange={handleIntervalChange} disabled={isRunning}>
-            <option value="1000">Muy rápido (1s)</option>
-            <option value="2000">Rápido (2s)</option>
-            <option value="3000">Normal (3s)</option>
-            <option value="5000">Lento (5s)</option>
-            <option value="8000">Muy lento (8s)</option>
-          </select>
-        </div>
-        
-        {/* Opciones del usuario para participar */}
-        <div className="user-settings">
-          <div>
-            <label>Patear penal </label>
-            <select 
-              value={userWillShoot.toString()} 
-              onChange={handleUserWillShootChange}
-              disabled={isRunning}
-            >
-              <option value="false">No</option>
-              <option value="true">Sí</option>
+          
+          <div className="interval-select">
+            <label>Velocidad de la simulación: </label>
+            <select value={interval} onChange={handleIntervalChange} disabled={isRunning}>
+              <option value="1000">Muy rápido (1s)</option>
+              <option value="2000">Rápido (2s)</option>
+              <option value="3000">Normal (3s)</option>
+              <option value="5000">Lento (5s)</option>
+              <option value="8000">Muy lento (8s)</option>
             </select>
           </div>
           
-          {userWillShoot && (
-            <>
-              <div>
-                <label>Elegir equipo</label>
-                <select 
-                  value={userTeam} 
-                  onChange={handleUserTeamChange}
-                  disabled={isRunning}
-                >
-                  <option value="teamA">{teamA}</option>
-                  <option value="teamB">{teamB}</option>
-                </select>
-              </div>
-              
-              <div>
-                <label>Elegir ronda</label>
-                <select 
-                  value={userRound} 
-                  onChange={handleUserRoundChange}
-                  disabled={isRunning}
-                >
-                  <option value="random">Aleatorio</option>
-                  {[...Array(11)].map((_, index) => (
-                    <option key={index + 1} value={index + 1}>{index + 1}</option>
-                  ))}
-                </select>
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-      
-      <button 
-        className="start-button" 
-        onClick={penaltyShootout} 
-        disabled={isRunning && !isUserTurn}
-      >
-        Iniciar Tanda de Penales
-      </button>
-      
-      {/* Opciones para el tiro del usuario */}
-      {userShotOptions && (
-        <div className="user-shot-options">
-          <h3>¡Tu turno! Elegir dirección del tiro:</h3>
-          <div className="goal-grid">
-            {[...Array(6)].map((_, index) => (
-              <button 
-                key={index + 1} 
-                className="shot-position"
-                onClick={() => handleUserShot(index + 1)}
+          {/* Opciones del usuario para participar */}
+          <div className="user-settings">
+  {/*           <div>
+              <label>Patear penal </label>
+              <select 
+                value={userWillShoot.toString()} 
+                onChange={handleUserWillShootChange}
+                disabled={isRunning}
               >
-                {index + 1}
-              </button>
-            ))}
+                <option value="false">No</option>
+                <option value="true">Sí</option>
+              </select>
+            </div> */}
+            
+            {userWillShoot && (
+              <>
+                <div>
+                  <label>Elegir equipo</label>
+                  <select 
+                    value={userTeam} 
+                    onChange={handleUserTeamChange}
+                    disabled={isRunning}
+                  >
+                    <option value="teamA">{teamA}</option>
+                    <option value="teamB">{teamB}</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label>Elegir ronda</label>
+                  <select 
+                    value={userRound} 
+                    onChange={handleUserRoundChange}
+                    disabled={isRunning}
+                  >
+                    <option value="random">Aleatorio</option>
+                    {[...Array(11)].map((_, index) => (
+                      <option key={index + 1} value={index + 1}>{index + 1}</option>
+                    ))}
+                  </select>
+                </div>
+              </>
+            )}
           </div>
         </div>
-      )}
-      
-      {(penaltyRounds.length > 0 || isRunning) && (
-        <div className="penalties-table-container">
-          <table className="penalties-table">
-            <thead>
-              <tr>
-                <th className="team-name">Equipo</th>
-                {[...Array(Math.max(5, penaltyRounds.length))].map((_, index) => (
-                  <th key={index} className={`penalty-round ${currentRound === index + 1 ? 'current-round' : ''}`}>
-                    {index + 1}
-                  </th>
-                ))}
-                <th className="penalty-total">Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="team-name">{teamA}</td>
-                {[...Array(Math.max(5, penaltyRounds.length))].map((_, index) => (
-                  <td key={index} className={`penalty-result ${currentRound === index + 1 ? 'current-round' : ''}`}>
-                    {renderPenaltyResult(
-                      penaltyRounds[index]?.teamA ?? null, 
-                      isRunning && currentRound === index + 1 && penaltyRounds[index]?.teamB === undefined
-                    )}
-                  </td>
-                ))}
-                <td className="penalty-total">{scoreA}</td>
-              </tr>
-              <tr>
-                <td className="team-name">{teamB}</td>
-                {[...Array(Math.max(5, penaltyRounds.length))].map((_, index) => (
-                  <td key={index} className={`penalty-result ${currentRound === index + 1 ? 'current-round' : ''}`}>
-                    {renderPenaltyResult(
-                      penaltyRounds[index]?.teamB ?? null,
-                      isRunning && currentRound === index + 1 && penaltyRounds[index]?.teamA !== undefined && penaltyRounds[index]?.teamB === undefined
-                    )}
-                  </td>
-                ))}
-                <td className="penalty-total">{scoreB}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      )}
-      
-      {matchResult && (
-        <div className="match-result">
-          <h2>{matchResult}</h2>
-        </div>
-      )}
+        
+        <button 
+          className="start-button" 
+          onClick={penaltyShootout} 
+          disabled={isRunning && !isUserTurn}
+        >
+          Iniciar tanda
+        </button>
+        
+        {/* Opciones para el tiro del usuario */}
+        {userShotOptions && (
+          <div className="user-shot-options">
+            <h3>¡Tu turno! Elegir dirección del tiro:</h3>
+            <div className="goal-grid">
+              {[...Array(6)].map((_, index) => (
+                <button 
+                  key={index + 1} 
+                  className="shot-position"
+                  onClick={() => handleUserShot(index + 1)}
+                >
+                  {index + 1}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+        
+        {(penaltyRounds.length > 0 || isRunning) && (
+          <div className="penalties-table-container">
+            <table className="penalties-table">
+              <thead>
+                <tr>
+                  <th className="team-name">Equipo</th>
+                  {[...Array(Math.max(5, penaltyRounds.length))].map((_, index) => (
+                    <th key={index} className={`penalty-round ${currentRound === index + 1 ? 'current-round' : ''}`}>
+                      {index + 1}
+                    </th>
+                  ))}
+                  <th className="penalty-total">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="team-name">{teamA}</td>
+                  {[...Array(Math.max(5, penaltyRounds.length))].map((_, index) => (
+                    <td key={index} className={`penalty-result ${currentRound === index + 1 ? 'current-round' : ''}`}>
+                      {renderPenaltyResult(
+                        penaltyRounds[index]?.teamA ?? null, 
+                        isRunning && currentRound === index + 1 && penaltyRounds[index]?.teamB === undefined
+                      )}
+                    </td>
+                  ))}
+                  <td className="penalty-total">{scoreA}</td>
+                </tr>
+                <tr>
+                  <td className="team-name">{teamB}</td>
+                  {[...Array(Math.max(5, penaltyRounds.length))].map((_, index) => (
+                    <td key={index} className={`penalty-result ${currentRound === index + 1 ? 'current-round' : ''}`}>
+                      {renderPenaltyResult(
+                        penaltyRounds[index]?.teamB ?? null,
+                        isRunning && currentRound === index + 1 && penaltyRounds[index]?.teamA !== undefined && penaltyRounds[index]?.teamB === undefined
+                      )}
+                    </td>
+                  ))}
+                  <td className="penalty-total">{scoreB}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        )}
+        
+        {matchResult && (
+          <div className="match-result">
+            <h2>{matchResult}</h2>
+          </div>
+        )}
 
+      </div>
     </div>
   );
 };
