@@ -18,11 +18,11 @@ const Inicio: React.FC = () => {
             Penales
           </Link>
         </li>
-        <li style={{ margin: '10px 0' }}>
+       {/*  <li style={{ margin: '10px 0' }}>
           <Link to="/editar" style={{ textDecoration: 'none', fontSize: '18px' }}>
             Editar (en construcción)
           </Link>
-        </li>
+        </li> */}
       </ul>
     </div>
   );
