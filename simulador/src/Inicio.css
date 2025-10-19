@@ -1,8 +1,119 @@
-*{
-  background: #175205ff;
-  color: #ddb504;
+/* === Todo lo de Inicio vive bajo .inicio-page === */
+.inicio-page {
+  /* “variables” locales solo dentro del contenedor */
+  --bg: #0f440f;
+  --bg2: #175205;
+  --brand: #ddb504;
+  --text: #f7f7f7;
+  --white: #ffffff;
+  --border: rgba(255, 255, 255, 0.85);
+  --shadow: 0 12px 30px rgba(0,0,0,0.35);
+  --radius: 20px;
+  --speed: 200ms;
+
+  min-height: 100vh;
+  padding: clamp(24px, 4vw, 48px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+
+  /* fondo solo para este contenedor */
+  background: radial-gradient(80% 80% at 50% 20%, var(--bg2) 0%, var(--bg) 60%);
+  color: var(--text);
 }
 
-.lista-inicio li a{
-  color: white;
+/* Header */
+.inicio-page__header { margin-bottom: clamp(24px, 5vw, 48px); }
+.inicio-page__title {
+  margin: 0 0 8px;
+  font-size: clamp(28px, 3.6vw, 48px);
+  letter-spacing: .5px;
+  color: var(--brand);
+  text-shadow: 0 2px 0 rgba(0,0,0,.25);
+}
+.inicio-page__subtitle { margin: 0; opacity: .9; }
+
+/* Grid */
+.inicio-page__grid {
+  list-style: none;
+  padding: 0;
+  margin: 32px auto 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: clamp(18px, 3vw, 28px);
+  width: 100%;
+  max-width: 920px;
+}
+
+/* Card (link completo clickeable) */
+.inicio-page__card {
+  display: grid;
+  place-items: center;
+  gap: 6px;
+  text-decoration: none;
+
+  /* Importante: por defecto ícono/texto dorados, fondo verdoso translúcido */
+  color: var(--brand);
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: clamp(28px, 5vw, 40px);
+  min-height: 240px;
+
+  box-shadow: var(--shadow);
+  transition: transform var(--speed) ease,
+              box-shadow var(--speed) ease,
+              border-color var(--speed) ease,
+              background var(--speed) ease,
+              color var(--speed) ease;
+  outline: none;
+}
+
+/* Hover/Focus: destacar en blanco */
+.inicio-page__card:hover,
+.inicio-page__card:focus-visible {
+  transform: translateY(-4px) scale(1.02);
+  border-color: var(--brand);
+  box-shadow: 0 16px 40px rgba(0,0,0,.45);
+  background: linear-gradient(180deg, rgba(221,181,4,.08), rgba(255,255,255,.03));
+  color: var(--white);
+}
+
+/* Icono grande */
+.inicio-page__icon {
+  font-size: clamp(56px, 8vw, 86px);
+  line-height: 1;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,.35));
+}
+
+/* Títulos/textos dentro de la card */
+.inicio-page__cardTitle {
+  margin: 6px 0 0;
+  font-size: clamp(22px, 2.3vw, 28px);
+  font-weight: 800;
+}
+.inicio-page__hint {
+  margin: 2px 0 0;
+  font-size: 14px;
+  opacity: .85;
+}
+
+/* Preferencias de accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+  .inicio-page__card { transition: none; }
+  .inicio-page__card:hover,
+  .inicio-page__card:focus-visible { transform: none; }
+}
+
+.inicio-page__card svg {
+  background: none !important;
+  fill: currentColor; /* usa el color de texto (dorado/blanco según hover) */
+}
+
+/* Aseguramos que íconos y textos NO tengan fondo sólido */
+.inicio-page__icon,
+.inicio-page__cardTitle,
+.inicio-page__hint {
+  background: none !important;
 }

@@ -1,21 +1,30 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import './Inicio.css';
+import React from "react";
+import { Link } from "react-router-dom";
+import { GiSoccerKick, GiGoalKeeper } from "react-icons/gi";
+import "./Inicio.css";
 
 const Inicio: React.FC = () => {
   return (
-    <div style={{ textAlign: 'center', marginTop: '50px' }}>
-      <h1>Simulador de Partidos</h1>
-      <p>Seleccioná una opción para comenzar:</p>
-      <ul className='lista-inicio' style={{ listStyle: 'none', padding: 0 }}>
-        <li style={{ margin: '10px 0' }}>
-          <Link to="/partido" style={{ textDecoration: 'none', fontSize: '18px' }}>
-            Partido
+    <main className="inicio-page">
+      <header className="inicio-page__header">
+        <h1 className="inicio-page__title">Simulador de Partidos</h1>
+        <p className="inicio-page__subtitle">Seleccioná una opción para comenzar:</p>
+      </header>
+
+      <ul className="inicio-page__grid" aria-label="Opciones de simulación">
+        <li>
+          <Link to="/partido" className="inicio-page__card" aria-label="Simular partido">
+            <div className="inicio-page__icon"><GiSoccerKick /></div>
+            <h2 className="inicio-page__cardTitle">Partido</h2>
+            <p className="inicio-page__hint">90’ + agregado</p>
           </Link>
         </li>
-        <li style={{ margin: '10px 0' }}>
-          <Link to="/penales" style={{ textDecoration: 'none', fontSize: '18px' }}>
-            Penales
+
+        <li>
+          <Link to="/penales" className="inicio-page__card" aria-label="Simular penales">
+            <div className="inicio-page__icon"><GiGoalKeeper /></div>
+            <h2 className="inicio-page__cardTitle">Penales</h2>
+            <p className="inicio-page__hint">Serie desde los 12 pasos</p>
           </Link>
         </li>
         <li style={{ margin: '10px 0' }}>
@@ -24,7 +33,7 @@ const Inicio: React.FC = () => {
           </Link>
         </li>
       </ul>
-    </div>
+    </main>
   );
 };
 
