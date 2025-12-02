@@ -33,6 +33,34 @@ h1{
   flex: 1;
 }
 
+.selected-teams {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.selected-team-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #fafafa;
+  min-width: 0;
+}
+
+.team-logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.team-name {
+  font-weight: 600;
+}
+
 input, select {
   padding: 8px;
   margin-left: 5px;

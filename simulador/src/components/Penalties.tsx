@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './Penalties.css';
 
 interface PenaltyRound {
@@ -7,8 +7,16 @@ interface PenaltyRound {
   teamB: boolean | null;
 }
 
+type Team = {
+  name: string;
+  logo: string;
+  media: number;
+};
+
 const Penalties: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const navigationState = location.state as { local?: Team; visitante?: Team };
   const positions = 6;
   const possibilities = 20;
   let scored: boolean;
@@ -22,8 +30,8 @@ const Penalties: React.FC = () => {
   // Estado para guardar el resultado del partido
   const [matchResult, setMatchResult] = useState<string>('');
   // Equipos
-  const [teamA, setTeamA] = useState<string>("River");
-  const [teamB, setTeamB] = useState<string>("San Lorenzo");
+  const [teamA] = useState<string>(navigationState?.local?.name ?? "River");
+  const [teamB] = useState<string>(navigationState?.visitante?.name ?? "San Lorenzo");
   // Estado para los penales individuales
   const [penaltyRounds, setPenaltyRounds] = useState<PenaltyRound[]>([]);
   // Estado para los totales
@@ -33,12 +41,12 @@ const Penalties: React.FC = () => {
   const [currentRound, setCurrentRound] = useState<number>(0);
 
   // Estados para la participación del usuario
-  const [userWillShoot, setUserWillShoot] = useState<boolean>(false);
+  const [userWillShoot, setUserWillShoot] = useState<boolean>(false); 
   const [userTeam, setUserTeam] = useState<string>("teamA");
   const [userRound, setUserRound] = useState<number | string>(1);
   const [isUserTurn, setIsUserTurn] = useState<boolean>(false);
   const [userShotOptions, setUserShotOptions] = useState<boolean>(false);
-  const [currentPenaltyTurn, setCurrentPenaltyTurn] = useState<number>(1);
+  const userShotResultRef = useRef<boolean | null>(null);
 
   const shoot = (): number => { return Math.floor(Math.random() * positions) + 1; };  // Patear a una de las 6 zonas. 
   
@@ -128,6 +136,8 @@ const Penalties: React.FC = () => {
     const userScored = penaltyShot(position);
     const teamKey = userTeam as 'teamA' | 'teamB';
     const teamName = teamKey === 'teamA' ? teamA : teamB;
+
+    userShotResultRef.current = userScored;
     
     addMessage(`¡TU TURNO! Pateas a la posición ${position}`);
     addMessage(`${teamName} ${userScored ? "gol" : "erra"}!`); // "River gol!"
@@ -165,7 +175,7 @@ const Penalties: React.FC = () => {
     setCurrentRound(0);
     setIsUserTurn(false);
     setUserShotOptions(false);
-    setCurrentPenaltyTurn(1);
+    userShotResultRef.current = null;
     
     const rounds = 5;
     let turnoA = 1;
@@ -178,9 +188,13 @@ const Penalties: React.FC = () => {
     // Calcular exactamente en qué momento el usuario pateará
     // La ronda del usuario puede ser aleatoria
     let actualUserRound = userRound;
-    if (userRound === 'random') {
-      actualUserRound = Math.floor(Math.random() * 11) + 1;
-      addMessage(`Se ha seleccionado aleatoriamente que patearás en la ronda ${actualUserRound}`);
+    if (userWillShoot) {
+      if (userRound === 'random') {
+        actualUserRound = Math.floor(Math.random() * 11) + 1;
+        addMessage(`Se ha seleccionado aleatoriamente que patearás en la ronda ${actualUserRound}`);
+      } else {
+        addMessage(`Patearás en la ronda ${actualUserRound}`);
+      }
     }
   
     addMessage(`${teamA} vs ${teamB} - Tanda de penales`);
@@ -202,10 +216,9 @@ const Penalties: React.FC = () => {
       // Calcular el número de tiro global (para cuando hay más de 11 jugadores)
       const globalTurnNumber = currentShooterRound > 11 ? ((currentShooterRound - 1) % 11) + 1 : currentShooterRound;
       
-      setCurrentPenaltyTurn(globalTurnNumber);
+      //setCurrentPenaltyTurn(globalTurnNumber);
       
-      const isUserShooting = userWillShoot && 
-                            currentTeamTurn === userTeam && 
+     const isUserShooting = userWillShoot && currentTeamTurn === userTeam &&
                             Number(actualUserRound) === globalTurnNumber;
       
       if (isUserShooting) {
@@ -225,7 +238,7 @@ const Penalties: React.FC = () => {
         continueShootoutRef = () => {
           // Actualizar los contadores globales con el resultado del tiro del usuario
           // Esto lo hacemos aquí para que se refleje en la lógica de la tanda
-          const userScoredResult = penaltyRounds[currentShooterRound - 1]?.[currentTeamTurn];
+          const userScoredResult = userShotResultRef.current;
           
           if (userScoredResult) {
             if (currentTeamTurn === 'teamA') {
@@ -234,7 +247,7 @@ const Penalties: React.FC = () => {
               teamBScore++;
             }
           }
-          
+          userShotResultRef.current = null;
           waitingForUser = false;
           
           // Continuamos con el flujo normal
@@ -398,24 +411,18 @@ const Penalties: React.FC = () => {
     setInterval(parseInt(e.target.value));
   };
 
-  const handleTeamAChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTeamA(e.target.value);
-  };
-
-  const handleTeamBChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTeamB(e.target.value);
-  };
-
-  const handleUserWillShootChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setUserWillShoot(e.target.value === "true");
-  };
-
   const handleUserTeamChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setUserTeam(e.target.value);
   };
 
+  const handleUserWillShootChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setUserWillShoot(e.target.value === "true");
+    setUserWillShoot(e.target.value === 'true');
+  };
+
   const handleUserRoundChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setUserRound(e.target.value);
+    const value = e.target.value;
+    setUserRound(value === 'random' ? 'random' : Number(value));
   };
 
   // Renderiza el resultado de un penal
@@ -436,24 +443,18 @@ const Penalties: React.FC = () => {
       <h1>Tanda de Penales</h1>
       <div className="penalties-container">
         <div className="settings">
-          <div className="teams-input">
-            <div>
-              <label>Equipo Local: </label>
-              <input 
-                type="text" 
-                value={teamA} 
-                onChange={handleTeamAChange} 
-                disabled={isRunning}
-              />
+          <div className="selected-teams">
+            <div className="selected-team-card">
+              {navigationState?.local?.logo && (
+                <img src={navigationState.local.logo} alt={teamA} className="team-logo" />
+              )}
+              <span className="team-name">{teamA}</span>
             </div>
-            <div>
-              <label>Equipo Visitante: </label>
-              <input 
-                type="text" 
-                value={teamB} 
-                onChange={handleTeamBChange} 
-                disabled={isRunning}
-              />
+            <div className="selected-team-card">
+              {navigationState?.visitante?.logo && (
+                <img src={navigationState.visitante.logo} alt={teamB} className="team-logo" />
+              )}
+              <span className="team-name">{teamB}</span>
             </div>
           </div>
           
@@ -470,7 +471,7 @@ const Penalties: React.FC = () => {
           
           {/* Opciones del usuario para participar */}
           <div className="user-settings">
-  {/*           <div>
+            <div>
               <label>Patear penal </label>
               <select 
                 value={userWillShoot.toString()} 
@@ -480,7 +481,7 @@ const Penalties: React.FC = () => {
                 <option value="false">No</option>
                 <option value="true">Sí</option>
               </select>
-            </div> */}
+            </div> 
             
             {userWillShoot && (
               <>
