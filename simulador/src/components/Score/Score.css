@@ -40,6 +40,12 @@
     transition: background-color 0.3s ease;
 }
 
+.post-match-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
 .score-container {
     display: flex;
     justify-content: center;

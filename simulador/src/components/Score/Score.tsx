@@ -263,6 +263,12 @@ const Score = () => {
         window.location.reload();
     };
 
+    const goToPenalties = () => {
+        navigate("/penales/simulacion", {
+            state: { local, visitante },
+        });
+    };
+
     function randomBetween(min: number, max: number): number {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
@@ -369,7 +375,12 @@ const Score = () => {
                             disabled={isGameStarted || matchDuration === null}
                         >Jugar</button>
                     ) : (
-                        <button className="btn-jugar" onClick={resetGame}>Reiniciar</button>
+                        <div className="post-match-actions">
+                            <button className="btn-jugar" onClick={resetGame}>Reiniciar</button>
+                            {goalsTeam1 === goalsTeam2 && (
+                                <button className="btn-jugar" onClick={goToPenalties}>Ir a penales</button>
+                            )}
+                        </div>
                     )}
                 </div>
                 <div className="team-intro">
