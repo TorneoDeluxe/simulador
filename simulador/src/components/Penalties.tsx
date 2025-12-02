@@ -547,21 +547,25 @@ const Penalties: React.FC = () => {
           </div>
         </div>
         
-        <button 
-          className="start-button"
-          onClick={penaltyShootout}
-          disabled={(isRunning && !isUserTurn) || isFinished}
-        >
-          Iniciar tanda
-        </button>
-
-        <button
-          className="start-button gold-button"
-          onClick={resetShootout}
-          disabled={isRunning}
-        >
-          Reiniciar
-        </button>
+        <div className="penalties-actions">
+          {!isFinished ? (
+            <button
+              className="btn-jugar"
+              onClick={penaltyShootout}
+              disabled={isRunning || isFinished}
+            >
+              Iniciar tanda
+            </button>
+          ) : (
+            <button
+              className="btn-jugar"
+              onClick={resetShootout}
+              disabled={isRunning}
+            >
+              Reiniciar
+            </button>
+          )}
+        </div>
         
         {/* Opciones para el tiro del usuario */}
         {userShotOptions && (
