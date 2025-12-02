@@ -35,30 +35,42 @@ h1{
 
 .selected-teams {
   display: flex;
-  gap: 12px;
   align-items: center;
+  gap: 2rem;
   justify-content: space-between;
 }
 
-.selected-team-card {
+.equipo-detalle {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  background-color: #fafafa;
-  min-width: 0;
+  text-align: center;
 }
 
-.team-logo {
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
+.detalle-local {
+  margin-right: 5rem;
 }
 
-.team-name {
-  font-weight: 600;
+.detalle-visitante {
+  margin-left: 5rem;
+}
+
+.escudo-grande {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.nombre {
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.media {
+  font-size: 1rem;
+  margin-top: 0.5rem;
+  justify-content: center;
 }
 
 input, select {

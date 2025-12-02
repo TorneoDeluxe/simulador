@@ -476,18 +476,24 @@ const Penalties: React.FC = () => {
       <div className="penalties-container">
         <div className="settings">
           <div className="selected-teams">
-            <div className="selected-team-card">
-              {navigationState?.local?.logo && (
-                <img src={navigationState.local.logo} alt={teamA} className="team-logo" />
-              )}
-              <span className="team-name">{teamA}</span>
-            </div>
-            <div className="selected-team-card">
-              {navigationState?.visitante?.logo && (
-                <img src={navigationState.visitante.logo} alt={teamB} className="team-logo" />
-              )}
-              <span className="team-name">{teamB}</span>
-            </div>
+             {navigationState?.local && (
+              <div className="equipo-detalle detalle-local">
+                <img src={navigationState.local.logo} alt={teamA} className="escudo-grande" />
+                <div className="nombre">{teamA}</div>
+                {navigationState.local.media !== undefined && (
+                  <div className="media">{navigationState.local.media}</div>
+                )}
+              </div>
+            )}
+            {navigationState?.visitante && (
+              <div className="equipo-detalle detalle-visitante">
+                <img src={navigationState.visitante.logo} alt={teamB} className="escudo-grande" />
+                <div className="nombre">{teamB}</div>
+                {navigationState.visitante.media !== undefined && (
+                  <div className="media">{navigationState.visitante.media}</div>
+                )}
+              </div>
+            )}
           </div>
           
           <div className="interval-select">
