@@ -78,6 +78,12 @@ input, select {
   margin-bottom: 20px;
 }
 
+.gold-button {
+  background-color: #ddb504;
+  color: #000;
+  font-weight: bold;
+}
+
 .start-button:disabled {
   cursor: not-allowed;
 }

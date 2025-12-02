@@ -27,6 +27,7 @@ const Penalties: React.FC = () => {
   const [, setMessages] = useState<string[]>([]);
   // Estado para controlar si la tanda está en curso
   const [isRunning, setIsRunning] = useState<boolean>(false);
+  const [isFinished, setIsFinished] = useState<boolean>(false);
   // Estado para guardar el resultado del partido
   const [matchResult, setMatchResult] = useState<string>('');
   // Equipos
@@ -47,9 +48,35 @@ const Penalties: React.FC = () => {
   const [isUserTurn, setIsUserTurn] = useState<boolean>(false);
   const [userShotOptions, setUserShotOptions] = useState<boolean>(false);
   const userShotResultRef = useRef<boolean | null>(null);
+  const timeoutIdRef = useRef<number | null>(null);
   const continueShootoutRef = useRef<() => void>(() => {
     console.log("Si llegaste acá, está mal.");
   });
+
+  const clearScheduledStep = () => {
+    if (timeoutIdRef.current) {
+      clearTimeout(timeoutIdRef.current);
+      timeoutIdRef.current = null;
+    }
+  };
+
+  const resetShootout = () => {
+    clearScheduledStep();
+    setIsRunning(false);
+    setIsFinished(false);
+    setPenaltyRounds([]);
+    setScoreA(0);
+    setScoreB(0);
+    setCurrentRound(0);
+    setIsUserTurn(false);
+    setUserShotOptions(false);
+    setMatchResult('');
+    setMessages([]);
+    userShotResultRef.current = null;
+    continueShootoutRef.current = () => {
+      console.log("Si llegaste acá, está mal.");
+    };
+  };
 
   const shoot = (): number => { return Math.floor(Math.random() * positions) + 1; };  // Patear a una de las 6 zonas. 
   
@@ -164,17 +191,9 @@ const Penalties: React.FC = () => {
 
   const penaltyShootout = () => {
     // Limpiar mensajes anteriores
-    setMessages([]);
-    setMatchResult('');
+    resetShootout();
     setIsRunning(true);
-    setPenaltyRounds([]);
-    setScoreA(0);
-    setScoreB(0);
-    setCurrentRound(0);
-    setIsUserTurn(false);
-    setUserShotOptions(false);
-    userShotResultRef.current = null;
-    
+    setIsFinished(false);    
     const rounds = 5;
     let turnoA = 1;
     let turnoB = 1;
@@ -262,6 +281,8 @@ const Penalties: React.FC = () => {
               addMessage(`${ganador} gana!`);
               setMatchResult(`Resultado final: ${teamA} ${teamAScore} - ${teamBScore} ${teamB}`);
               setIsRunning(false);
+              setIsFinished(true);
+              clearScheduledStep();
               return;
             } else {
               estado = "A";
@@ -269,19 +290,20 @@ const Penalties: React.FC = () => {
           } else if (currentEstado === "SuddenA") {
             estado = "SuddenB";
           } else if (currentEstado === "SuddenB") {
-            if (teamAScore !== teamBScore) {
-              const ganador = teamAScore > teamBScore ? teamA : teamB;
-              addMessage(`${ganador} gana!`);
-              setMatchResult(`Resultado final: ${teamA} ${teamAScore} - ${teamBScore} ${teamB}`);
-              setIsRunning(false);
-              return;
-            } else {
-              suddenDeathRound++;
-              estado = "SuddenA";
-            }
+              if (teamAScore !== teamBScore) {
+                const ganador = teamAScore > teamBScore ? teamA : teamB;
+                addMessage(`${ganador} gana!`);
+                setMatchResult(`Resultado final: ${teamA} ${teamAScore} - ${teamBScore} ${teamB}`);
+                setIsRunning(false);
+                setIsFinished(true);
+                clearScheduledStep();
+                return;
+              } else {
+                suddenDeathRound++;
+                estado = "SuddenA";
+              }
           }
-          
-          setTimeout(nextStep, interval);
+          timeoutIdRef.current = window.setTimeout(nextStep, interval);
         };
         
         return;
@@ -293,6 +315,8 @@ const Penalties: React.FC = () => {
           addMessage(`${teamA} gana!`);
           setMatchResult(`Resultado final: ${teamA} ${teamAScore} - ${teamBScore} ${teamB}`);
           setIsRunning(false);
+          setIsFinished(true);
+          clearScheduledStep();
           return;
         }
   
@@ -312,6 +336,8 @@ const Penalties: React.FC = () => {
           addMessage(`${teamA} gana!`);
           setMatchResult(`Resultado final: ${teamA} ${teamAScore} - ${teamBScore} ${teamB}`);
           setIsRunning(false);
+          setIsFinished(true);
+          clearScheduledStep();
           return;
         }
   
@@ -320,6 +346,8 @@ const Penalties: React.FC = () => {
           addMessage(`${teamB} gana!`);
           setMatchResult(`Resultado final: ${teamA} ${teamAScore} - ${teamBScore} ${teamB}`);
           setIsRunning(false);
+          setIsFinished(true);
+          clearScheduledStep();
           return;
         }
 
@@ -339,6 +367,8 @@ const Penalties: React.FC = () => {
           addMessage(`${teamB} gana!`);
           setMatchResult(`Resultado final: ${teamA} ${teamAScore} - ${teamBScore} ${teamB}`);
           setIsRunning(false);
+          setIsFinished(true);
+          clearScheduledStep();
           return;
         }
   
@@ -353,6 +383,8 @@ const Penalties: React.FC = () => {
           addMessage(`${ganador} gana!`);
           setMatchResult(`Resultado final: ${teamA} ${teamAScore} - ${teamBScore} ${teamB}`);
           setIsRunning(false);
+          setIsFinished(true);
+          clearScheduledStep();
           return;
         } else {
           estado = "A";
@@ -384,6 +416,8 @@ const Penalties: React.FC = () => {
           addMessage(`${ganador} gana!`);
           setMatchResult(`Resultado final: ${teamA} ${teamAScore} - ${teamBScore} ${teamB}`);
           setIsRunning(false);
+          setIsFinished(true);
+          clearScheduledStep();
           return;
         } else {
           suddenDeathRound++;
@@ -392,16 +426,16 @@ const Penalties: React.FC = () => {
       }
       
       // Programar el siguiente paso
-      setTimeout(nextStep, interval);
+      timeoutIdRef.current = window.setTimeout(nextStep, interval);
     };
     
     // Iniciar la tanda
-    setTimeout(nextStep, interval);
+    timeoutIdRef.current = window.setTimeout(nextStep, interval);
     
     // Guardar la función para continuar después del tiro del usuario
     continueShootoutRef.current = () => {
       waitingForUser = false;
-      setTimeout(nextStep, interval);
+      timeoutIdRef.current = window.setTimeout(nextStep, interval);
     };
   };
 
@@ -514,11 +548,19 @@ const Penalties: React.FC = () => {
         </div>
         
         <button 
-          className="start-button" 
-          onClick={penaltyShootout} 
-          disabled={isRunning && !isUserTurn}
+          className="start-button"
+          onClick={penaltyShootout}
+          disabled={(isRunning && !isUserTurn) || isFinished}
         >
           Iniciar tanda
+        </button>
+
+        <button
+          className="start-button gold-button"
+          onClick={resetShootout}
+          disabled={isRunning}
+        >
+          Reiniciar
         </button>
         
         {/* Opciones para el tiro del usuario */}
