@@ -24,7 +24,7 @@ const Penalties: React.FC = () => {
   // Estado para el intervalo de tiempo (ms)
   const [interval, setInterval] = useState<number>(5000);
   // Estado para mostrar los mensajes de los penales en la UI
-  const [messages, setMessages] = useState<string[]>([]);
+  const [, setMessages] = useState<string[]>([]);
   // Estado para controlar si la tanda está en curso
   const [isRunning, setIsRunning] = useState<boolean>(false);
   // Estado para guardar el resultado del partido
@@ -47,6 +47,9 @@ const Penalties: React.FC = () => {
   const [isUserTurn, setIsUserTurn] = useState<boolean>(false);
   const [userShotOptions, setUserShotOptions] = useState<boolean>(false);
   const userShotResultRef = useRef<boolean | null>(null);
+  const continueShootoutRef = useRef<() => void>(() => {
+    console.log("Si llegaste acá, está mal.");
+  });
 
   const shoot = (): number => { return Math.floor(Math.random() * positions) + 1; };  // Patear a una de las 6 zonas. 
   
@@ -153,15 +156,10 @@ const Penalties: React.FC = () => {
     setIsUserTurn(false);
     resumeShootout();
   };
-
-  // Referencia mutable para almacenar la función que continuará la tanda. Se modifica en nextStep()
-  let continueShootoutRef: () => void = () => {
-    console.log("Si llegaste acá, está mal.");
-  };
   
   const resumeShootout = () => {
     // Esta función se llamará después de que el usuario patea
-    continueShootoutRef();
+    continueShootoutRef.current();
   };
 
   const penaltyShootout = () => {
@@ -235,7 +233,7 @@ const Penalties: React.FC = () => {
         addMessage(`Selecciona una posición para tu tiro (1-6)`);
         
         // Definir la función que continuará después del tiro del usuario
-        continueShootoutRef = () => {
+        continueShootoutRef.current = () => {
           // Actualizar los contadores globales con el resultado del tiro del usuario
           // Esto lo hacemos aquí para que se refleje en la lógica de la tanda
           const userScoredResult = userShotResultRef.current;
@@ -401,7 +399,7 @@ const Penalties: React.FC = () => {
     setTimeout(nextStep, interval);
     
     // Guardar la función para continuar después del tiro del usuario
-    continueShootoutRef = () => {
+    continueShootoutRef.current = () => {
       waitingForUser = false;
       setTimeout(nextStep, interval);
     };
