@@ -78,8 +78,8 @@ const SelectorEquipos: React.FC<Props> = ({ onSelectedTeam }) => {
   }, []);
 
   const generateLogoPath = (name: string, country: string ) => {
-    const basePath = `src/assets/Escudos/${country}`;
-    return `${basePath}/${name.replace(/\s+/g, "_").replace(/[()]/g, "")}.png`;
+    const sanitizedName = name.replace(/\s+/g, "_").replace(/[()]/g, "");
+    return new URL(`../../assets/Escudos/${country}/${sanitizedName}.png`, import.meta.url).href;
   };
 
   const handleSeleccion = (equipo: Team) => {

@@ -32,13 +32,6 @@ const Score = () => {
     };
     const { local, visitante } = location.state as LocationState;
 
-    const generateLogoPath = (name: string) => {
-        const basePath = "/src/assets/Escudos";
-        return `${basePath}/${name.replace(/\s+/g, "_").replace(/[()]/g, "")}.png`;
-    };
-    local.logo = generateLogoPath(local.name);
-    visitante.logo = generateLogoPath(visitante.name);
-
     const gameTime: number = 45;
 
     const [currentMinute, setCurrentMinute] = useState<string | number>(0);
