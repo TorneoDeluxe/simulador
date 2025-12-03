@@ -469,7 +469,7 @@ const Penalties: React.FC = () => {
   }
 
   return (
-    <div>
+    <div className="penalties-page">
       <button className="backbutton" onClick={volverAInicio}>Volver a Inicio</button>
       <h1>Tanda de Penales</h1>
       <div className="penalties-container">
@@ -478,93 +478,95 @@ const Penalties: React.FC = () => {
              {navigationState?.local && (
               <div className="equipo-detalle detalle-local">
                 <img src={navigationState.local.logo} alt={teamA} className="escudo-grande" />
-                <div className="nombre">{teamA}</div>
+                <h2>{teamA}</h2>
               </div>
             )}
             {navigationState?.visitante && (
               <div className="equipo-detalle detalle-visitante">
                 <img src={navigationState.visitante.logo} alt={teamB} className="escudo-grande" />
-                <div className="nombre">{teamB}</div>
+                <h2>{teamB}</h2>
               </div>
             )}
           </div>
           
-          <div className="interval-select">
-            <label>Velocidad de la simulación: </label>
-            <select value={interval} onChange={handleIntervalChange} disabled={isRunning}>
-              <option value="1000">Muy rápido (1s)</option>
-              <option value="2000">Rápido (2s)</option>
-              <option value="3000">Normal (3s)</option>
-              <option value="5000">Lento (5s)</option>
-              <option value="8000">Muy lento (8s)</option>
-            </select>
-          </div>
-          
-          {/* Opciones del usuario para participar */}
-          <div className="user-settings">
-            <div>
-              <label>Patear penal </label>
-              <select
-                value={userWillShoot.toString()}
-                onChange={handleUserWillShootChange}
-                disabled={isRunning}
-              >
-                <option value="false">No</option>
-                <option value="true">Sí</option>
+          <div className="controls-row">
+            <div className="interval-select">
+              <label>Velocidad de la simulación: </label>
+              <select value={interval} onChange={handleIntervalChange} disabled={isRunning}>
+                <option value="1000">Muy rápido (1s)</option>
+                <option value="2000">Rápido (2s)</option>
+                <option value="3000">Normal (3s)</option>
+                <option value="5000">Lento (5s)</option>
+                <option value="8000">Muy lento (8s)</option>
               </select>
             </div>
-            
-            {userWillShoot && (
-              <>
-                <div>
-                  <label>Elegir equipo</label>
-                  <select
-                    value={userTeam}
-                    onChange={handleUserTeamChange}
-                    disabled={isRunning}
-                  >
-                    <option value="teamA">{teamA}</option>
-                    <option value="teamB">{teamB}</option>
-                  </select>
-                </div>
-                
-                <div>
-                  <label>Elegir ronda</label>
-                  <select
-                    value={userRound}
-                    onChange={handleUserRoundChange}
-                    disabled={isRunning}
-                  >
-                    <option value="random">Aleatorio</option>
-                    {[...Array(11)].map((_, index) => (
-                      <option key={index + 1} value={index + 1}>{index + 1}</option>
-                    ))}
-                  </select>
-                </div>
-              </>
-            )}
+            {/* Opciones del usuario para participar */}
+            <div className="user-settings">
+              <div>
+                <label>Patear penal </label>
+                <select
+                  value={userWillShoot.toString()}
+                  onChange={handleUserWillShootChange}
+                  disabled={isRunning}
+                >
+                  <option value="false">No</option>
+                  <option value="true">Sí</option>
+                </select>
+              </div>
+
+              {userWillShoot && (
+                <>
+                  <div>
+                    <label>Elegir equipo</label>
+                    <select
+                      value={userTeam}
+                      onChange={handleUserTeamChange}
+                      disabled={isRunning}
+                    >
+                      <option value="teamA">{teamA}</option>
+                      <option value="teamB">{teamB}</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label>Elegir ronda</label>
+                    <select
+                      value={userRound}
+                      onChange={handleUserRoundChange}
+                      disabled={isRunning}
+                    >
+                      <option value="random">Aleatorio</option>
+                      {[...Array(11)].map((_, index) => (
+                        <option key={index + 1} value={index + 1}>{index + 1}</option>
+                      ))}
+                    </select>
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className="penalties-actions">
+              {!isFinished ? (
+                <button
+                  className="btn-jugar"
+                  onClick={penaltyShootout}
+                  disabled={isRunning || isFinished}
+                >
+                  Iniciar tanda
+                </button>
+              ) : (
+                <button
+                  className="btn-jugar"
+                  onClick={resetShootout}
+                  disabled={isRunning}
+                >
+                  Reiniciar
+                </button>
+              )}
+            </div>
           </div>
         </div>
-        
-        <div className="penalties-actions">
-          {!isFinished ? (
-            <button
-              className="btn-jugar"
-              onClick={penaltyShootout}
-              disabled={isRunning || isFinished}
-            >
-              Iniciar tanda
-            </button>
-          ) : (
-            <button
-              className="btn-jugar"
-              onClick={resetShootout}
-              disabled={isRunning}
-            >
-              Reiniciar
-            </button>
-          )}
-        </div>
+      
         
         {/* Opciones para el tiro del usuario */}
         {userShotOptions && (
