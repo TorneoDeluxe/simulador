@@ -42,7 +42,7 @@ const Penalties: React.FC = () => {
   const [currentRound, setCurrentRound] = useState<number>(0);
 
   // Estados para la participación del usuario
-  const [userWillShoot, setUserWillShoot] = useState<boolean>(false); 
+  const [userWillShoot, setUserWillShoot] = useState<boolean>(false);
   const [userTeam, setUserTeam] = useState<string>("teamA");
   const [userRound, setUserRound] = useState<number | string>(1);
   const [isUserTurn, setIsUserTurn] = useState<boolean>(false);
@@ -448,7 +448,6 @@ const Penalties: React.FC = () => {
   };
 
   const handleUserWillShootChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setUserWillShoot(e.target.value === "true");
     setUserWillShoot(e.target.value === 'true');
   };
 
@@ -480,18 +479,12 @@ const Penalties: React.FC = () => {
               <div className="equipo-detalle detalle-local">
                 <img src={navigationState.local.logo} alt={teamA} className="escudo-grande" />
                 <div className="nombre">{teamA}</div>
-                {navigationState.local.media !== undefined && (
-                  <div className="media">{navigationState.local.media}</div>
-                )}
               </div>
             )}
             {navigationState?.visitante && (
               <div className="equipo-detalle detalle-visitante">
                 <img src={navigationState.visitante.logo} alt={teamB} className="escudo-grande" />
                 <div className="nombre">{teamB}</div>
-                {navigationState.visitante.media !== undefined && (
-                  <div className="media">{navigationState.visitante.media}</div>
-                )}
               </div>
             )}
           </div>
@@ -511,22 +504,22 @@ const Penalties: React.FC = () => {
           <div className="user-settings">
             <div>
               <label>Patear penal </label>
-              <select 
-                value={userWillShoot.toString()} 
+              <select
+                value={userWillShoot.toString()}
                 onChange={handleUserWillShootChange}
                 disabled={isRunning}
               >
                 <option value="false">No</option>
                 <option value="true">Sí</option>
               </select>
-            </div> 
+            </div>
             
             {userWillShoot && (
               <>
                 <div>
                   <label>Elegir equipo</label>
-                  <select 
-                    value={userTeam} 
+                  <select
+                    value={userTeam}
                     onChange={handleUserTeamChange}
                     disabled={isRunning}
                   >
@@ -537,8 +530,8 @@ const Penalties: React.FC = () => {
                 
                 <div>
                   <label>Elegir ronda</label>
-                  <select 
-                    value={userRound} 
+                  <select
+                    value={userRound}
                     onChange={handleUserRoundChange}
                     disabled={isRunning}
                   >

@@ -49,7 +49,7 @@ const SelectorEquipos: React.FC<Props> = ({ onSelectedTeam }) => {
             .map((eq: any) => ({
               name: eq.nombre,
               media: eq.media,
-              logo: generateLogoPath(eq.nombre),
+              logo: generateLogoPath(eq.nombre, liga.pais),
             })),
         }));
 
@@ -77,8 +77,8 @@ const SelectorEquipos: React.FC<Props> = ({ onSelectedTeam }) => {
     fetchData();
   }, []);
 
-  const generateLogoPath = (name: string) => {
-    const basePath = "src/assets/Escudos";
+  const generateLogoPath = (name: string, country: string ) => {
+    const basePath = `src/assets/Escudos/${country}`;
     return `${basePath}/${name.replace(/\s+/g, "_").replace(/[()]/g, "")}.png`;
   };
 
