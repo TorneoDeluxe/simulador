@@ -27,11 +27,6 @@ const Inicio: React.FC = () => {
             <p className="inicio-page__hint">Serie desde los 12 pasos</p>
           </Link>
         </li>
-        <li style={{ margin: '10px 0' }}>
-          <Link to="/editar" style={{ textDecoration: 'none', fontSize: '18px' }}>
-            Editar (en construcción)
-          </Link>
-        </li>
       </ul>
     </main>
   );

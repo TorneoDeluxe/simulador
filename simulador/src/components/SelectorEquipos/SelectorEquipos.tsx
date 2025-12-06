@@ -28,7 +28,7 @@ type Props = {
 
 const SelectorEquipos: React.FC<Props> = ({ onSelectedTeam }) => {
   const [countries, setCountries] = useState<Country[]>([]);
-  const [selectedCountryIndex, setSelectedCountryIndex] = useState(2);
+  const [selectedCountryIndex, setSelectedCountryIndex] = useState(1);
   const [selectedLeagueIndex, setSelectedLeagueIndex] = useState(0);
 
   const selectedCountry = countries[selectedCountryIndex];
@@ -56,10 +56,50 @@ const SelectorEquipos: React.FC<Props> = ({ onSelectedTeam }) => {
     setCountries(countriesWithLogos);
   }, []);
 
-  const generateLogoPath = (name: string, country: string ) => {
+  // Equipos que tienen escudo en .webp en lugar de .png
+const WEBP_TEAMS_BY_COUNTRY: Record<string, string[]> = {
+  Brasil: [
+    "Palmeiras",
+    "Corinthians",
+    "Santos",
+    "Fluminense",
+    "Ceará",
+    "Vasco da Gama",
+    "Internacional",
+    "Sport Recife",
+    "Goias",
+  ],
+  Italia: [
+    "Napoli",
+    "Roma",
+    "Lecce",
+    
+  ],
+  "Resto de Europa": [
+    "Olympiakos",
+    "Celtic",
+    "Galatasaray"
+  ],
+  "Resto de América": [
+    "Independiente del Valle",
+    "Atlético Nacional"
+  ],
+};
+
+  const generateLogoPath = (name: string, country: string) => {
     const sanitizedName = name.replace(/\s+/g, "_").replace(/[()]/g, "");
-    return new URL(`../../assets/Escudos/${country}/${sanitizedName}.png`, import.meta.url).href;
+
+    const webpTeams = WEBP_TEAMS_BY_COUNTRY[country] ?? [];
+    const shouldUseWebp = webpTeams.includes(name);
+
+    const extension = shouldUseWebp ? "webp" : "png";
+
+    return new URL(
+      `../../assets/Escudos/${country}/${sanitizedName}.${extension}`,
+      import.meta.url
+    ).href;
   };
+
 
   const handleSeleccion = (equipo: Team) => {
     onSelectedTeam(equipo);
