@@ -1,6 +1,7 @@
 // src/components/SelectorEquipos/SelectorEquipos.tsx
 import React, { useEffect, useState } from "react";
 import "./SelectorEquipos.css";
+import { HARDCODED_COUNTRIES } from "../../data/hardcodedCountries";
 
 interface Team {
   name: string;
@@ -34,47 +35,25 @@ const SelectorEquipos: React.FC<Props> = ({ onSelectedTeam }) => {
   const selectedLeague = selectedCountry?.leagues[selectedLeagueIndex];
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const ligasResponse = await fetch("https://localhost:7225/api/ligas");
-        const equiposResponse = await fetch("https://localhost:7225/api/equipos");
+    // Transformo los datos hardcodeados en el mismo modelo que usa el componente
+    const countriesWithLogos: Country[] = HARDCODED_COUNTRIES.map((country) => ({
+      name: country.name,
+      leagues: country.leagues.map((league) => ({
+        ...league,
+        teams: league.teams.map((team) => ({
+          ...team,
+          logo: generateLogoPath(team.name, league.pais),
+        })),
+      })),
+    }));
 
-        const ligas: League[] = await ligasResponse.json();
-        const equipos = await equiposResponse.json();
+    // si querés, podés ordenar igual que antes:
+    countriesWithLogos.sort((a, b) => a.name.localeCompare(b.name));
+    countriesWithLogos.forEach((pais) => {
+      pais.leagues.sort((a, b) => a.categoria - b.categoria);
+    });
 
-        const ligasConEquipos: League[] = ligas.map((liga) => ({
-          ...liga,
-          teams: equipos
-            .filter((eq: any) => eq.ligaId === liga.id)
-            .map((eq: any) => ({
-              name: eq.nombre,
-              media: eq.media,
-              logo: generateLogoPath(eq.nombre, liga.pais),
-            })),
-        }));
-
-        const agrupadoPorPais: Country[] = [];
-        ligasConEquipos.forEach((liga) => {
-          const paisExistente = agrupadoPorPais.find((c) => c.name === liga.pais);
-          if (paisExistente) {
-            paisExistente.leagues.push(liga);
-          } else {
-            agrupadoPorPais.push({ name: liga.pais, leagues: [liga] });
-          }
-        });
-
-        agrupadoPorPais.sort((a, b) => a.name.localeCompare(b.name));
-        agrupadoPorPais.forEach((pais) => {
-          pais.leagues.sort((a, b) => a.categoria - b.categoria);
-        });
-
-        setCountries(agrupadoPorPais);
-      } catch (error) {
-        console.error("Error al cargar datos:", error);
-      }
-    };
-
-    fetchData();
+    setCountries(countriesWithLogos);
   }, []);
 
   const generateLogoPath = (name: string, country: string ) => {
