@@ -57,7 +57,9 @@ const Score = () => {
 
     useEffect(() => {
         return () => {
-            if (intervalIdRef.current) clearInterval(intervalIdRef.current);
+            if (intervalIdRef.current !== null) {
+                clearTimeout(intervalIdRef.current);
+            }
         };
     }, []);
     
@@ -188,24 +190,28 @@ const Score = () => {
     
         const totalMinutes = minutesPlayed.length;
 
-        let intervalDuration: number;
-        if (matchDuration === -1) {
-            intervalDuration = 1000;
-        } else {
-            intervalDuration = (matchDuration * 60 * 1000) / totalMinutes;
-        }
+        const intervalDuration = matchDuration === -1
+            ? 60 * 1000
+            : (matchDuration * 60 * 1000) / totalMinutes;
         advanceTime(minutesPlayed, intervalDuration, simmedChances);
     }
-    
+
     const advanceTime = (minutesPlayed: { number: number; half: string }[],
         intervalDuration: number,
         simmedChances: Chance[]) => {
         let currentMinuteIndex = 0;
         let scoreText = "";
 
-        const interval = setInterval(() => {
+        const clearExistingTimer = () => {
+            if (intervalIdRef.current !== null) {
+                clearTimeout(intervalIdRef.current);
+            }
+        };
+
+        const startTime = performance.now();
+        const tick = () => {
             if (currentMinuteIndex >= minutesPlayed.length) {
-                clearInterval(interval);
+                clearExistingTimer();
                 scoreText = 'Final del partido';
                 setCurrentMinute(scoreText);
                 setIsGameFinished(true);
@@ -223,14 +229,14 @@ const Score = () => {
                 scoreText = `${currentMinute.number}'`;
             }
 
-            const chancesThisMinute = simmedChances.filter(chance => 
+            const chancesThisMinute = simmedChances.filter(chance =>
                 chance.minute === currentMinute.number && chance.half === currentMinute.half
             );
-    
+
             chancesThisMinute.forEach((chance) => {
                 console.log(`${chance.minute} minutos: ${chance.result} de ${chance.team}.`);
                 writeChance(chance);
-    
+
                 if (chance.result === "Gol") {
                     if (chance.team === local.name) {
                         setGoalsTeam1((prevGoals) => prevGoals + 1);
@@ -245,7 +251,12 @@ const Score = () => {
             setCurrentMinute(scoreText);
 
             currentMinuteIndex++;
-        }, intervalDuration);
+            const expectedNextTick = startTime + currentMinuteIndex * intervalDuration;
+            const delay = Math.max(0, expectedNextTick - performance.now());
+            intervalIdRef.current = window.setTimeout(tick, delay);
+        };
+
+        intervalIdRef.current = window.setTimeout(tick, intervalDuration);
     }
 
     const writeChance = (chance: Chance) => {
