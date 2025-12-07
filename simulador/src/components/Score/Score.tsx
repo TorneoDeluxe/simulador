@@ -62,6 +62,23 @@ const Score = () => {
             }
         };
     }, []);
+
+    const clampSpecialChances = (value: number) => {
+        if (Number.isNaN(value)) {
+            return 0;
+        }
+        return Math.min(25, Math.max(0, value));
+    };
+
+    const handleSpecialChancesTeam1Change = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const value = parseInt(event.target.value, 10);
+        setSpecialChancesTeam1(clampSpecialChances(value));
+    };
+
+    const handleSpecialChancesTeam2Change = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const value = parseInt(event.target.value, 10);
+        setSpecialChancesTeam2(clampSpecialChances(value));
+    };
     
     const playMatch = () => {
         const minutesPlayed = simulateMinutes();
@@ -403,7 +420,7 @@ const Score = () => {
                         min="0"
                         max="25"
                         value={specialChancesTeam1}
-                        onChange={(e) => setSpecialChancesTeam1(parseInt(e.target.value) || 0)}
+                        onChange={handleSpecialChancesTeam1Change}
                     />
                 </label>
             </div>
@@ -416,7 +433,7 @@ const Score = () => {
                         min="0"
                         max="25"
                         value={specialChancesTeam2}
-                        onChange={(e) => setSpecialChancesTeam2(parseInt(e.target.value) || 0)}
+                        onChange={handleSpecialChancesTeam2Change}
                     />
                 </label>
             </div>
