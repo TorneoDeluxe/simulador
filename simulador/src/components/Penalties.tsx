@@ -45,7 +45,7 @@ const Penalties: React.FC = () => {
   const [userWillShoot, setUserWillShoot] = useState<boolean>(false);
   const [userTeam, setUserTeam] = useState<string>("teamA");
   const [userRound, setUserRound] = useState<number | string>(1);
-  const [isUserTurn, setIsUserTurn] = useState<boolean>(false);
+  const [, setIsUserTurn] = useState<boolean>(false);
   const [userShotOptions, setUserShotOptions] = useState<boolean>(false);
   const userShotResultRef = useRef<boolean | null>(null);
   const timeoutIdRef = useRef<number | null>(null);
