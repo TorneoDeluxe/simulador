@@ -241,6 +241,7 @@ export const HARDCODED_COUNTRIES: HardcodedCountry[] = [
           { name: "Rayo Vallecano", media: 75 },
           { name: "Alavés", media: 76 },
           { name: "Elche", media: 72 },
+          { name: "Deportivo La Coruña", media: 84 },
         ],
       },
     ],
