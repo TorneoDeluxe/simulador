@@ -22,7 +22,7 @@ const Penalties: React.FC = () => {
   let scored: boolean;
   
   // Estado para el intervalo de tiempo (ms)
-  const [interval, setInterval] = useState<number>(5000);
+  const [interval, setInterval] = useState<number>(3000);
   // Estado para mostrar los mensajes de los penales en la UI
   const [, setMessages] = useState<string[]>([]);
   // Estado para controlar si la tanda está en curso
