@@ -42,7 +42,7 @@ const Partido: React.FC = () => {
         {/* Selector de equipo local */}
         <div className="selector-local">
           <h5 className="elegir-equipo">Local</h5>
-          <SelectorEquipos onSelectedTeam={setEquipoLocal} />
+          <SelectorEquipos onSelectedTeam={setEquipoLocal} selectedTeam={equipoLocal}/>
         </div>
 
         {/* Resumen en el medio */}
@@ -75,7 +75,7 @@ const Partido: React.FC = () => {
         {/* Selector de equipo visitante */}
         <div className="selector-visitante">
           <h5 className="elegir-equipo">Visitante</h5>
-          <SelectorEquipos onSelectedTeam={setEquipoVisitante} />
+          <SelectorEquipos onSelectedTeam={setEquipoVisitante} selectedTeam={equipoVisitante}/>
         </div>
       </div>
     </div>

@@ -45,7 +45,6 @@ const Penalties: React.FC = () => {
   const [userWillShoot, setUserWillShoot] = useState<boolean>(false);
   const [userTeam, setUserTeam] = useState<string>("teamA");
   const [userRound, setUserRound] = useState<number | string>(1);
-  const [isUserTurn, setIsUserTurn] = useState<boolean>(false);
   const [userShotOptions, setUserShotOptions] = useState<boolean>(false);
   const userShotResultRef = useRef<boolean | null>(null);
   const timeoutIdRef = useRef<number | null>(null);
@@ -68,7 +67,6 @@ const Penalties: React.FC = () => {
     setScoreA(0);
     setScoreB(0);
     setCurrentRound(0);
-    setIsUserTurn(false);
     setUserShotOptions(false);
     setMatchResult('');
     setMessages([]);
@@ -180,7 +178,6 @@ const Penalties: React.FC = () => {
     updatePenaltyResult(teamKey, userScored, currentRound - 1); //TeamA, 6, NRonda -1
     
     // Continuar con la tanda de penales
-    setIsUserTurn(false);
     resumeShootout();
   };
   
@@ -240,7 +237,6 @@ const Penalties: React.FC = () => {
       
       if (isUserShooting) {
         // Es el turno del usuario
-        setIsUserTurn(true);
         setUserShotOptions(true);
         waitingForUser = true;
         setCurrentRound(currentShooterRound);
@@ -464,13 +460,18 @@ const Penalties: React.FC = () => {
     return result ? <span className="penalty-scored">✅</span> : <span className="penalty-missed">❌</span>;
   };
 
-  const volverAInicio = () => {
-    navigate("/");
+  const volverASelector = () => {
+    navigate("/penales", {
+      state: {
+        local: navigationState?.local,
+        visitante: navigationState?.visitante,
+      },
+    });
   }
 
   return (
     <div className="penalties-page">
-      <button className="backbutton" onClick={volverAInicio}>Volver a Inicio</button>
+      <button className="backbutton" onClick={volverASelector}>Volver</button>
       <h1>Tanda de Penales</h1>
       <div className="penalties-container">
         <div className="settings">

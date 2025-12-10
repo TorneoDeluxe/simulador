@@ -23,9 +23,10 @@ interface Country {
 
 type Props = {
   onSelectedTeam: (team: Team) => void;
+  selectedTeam?: Team | null;
 };
 
-const SelectorEquipos: React.FC<Props> = ({ onSelectedTeam }) => {
+const SelectorEquipos: React.FC<Props> = ({ onSelectedTeam, selectedTeam }) => {
   const [countries, setCountries] = useState<Country[]>([]);
   const [selectedCountryIndex, setSelectedCountryIndex] = useState(2);
   const [selectedLeagueIndex, setSelectedLeagueIndex] = useState(0);
@@ -76,6 +77,27 @@ const SelectorEquipos: React.FC<Props> = ({ onSelectedTeam }) => {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (!selectedTeam || countries.length === 0) return;
+
+    const countryIndex = countries.findIndex((country) =>
+      country.leagues.some((league) =>
+        league.teams?.some((team) => team.name === selectedTeam.name)
+      )
+    );
+
+    if (countryIndex === -1) return;
+
+    const leagueIndex = countries[countryIndex].leagues.findIndex((league) =>
+      league.teams?.some((team) => team.name === selectedTeam.name)
+    );
+
+    if (leagueIndex === -1) return;
+
+    setSelectedCountryIndex(countryIndex);
+    setSelectedLeagueIndex(leagueIndex);
+  }, [countries, selectedTeam]);
 
   const generateLogoPath = (name: string, country: string ) => {
     const sanitizedName = name.replace(/\s+/g, "_").replace(/[()]/g, "");

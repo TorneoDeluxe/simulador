@@ -43,7 +43,7 @@ const Penales: React.FC = () => {
       <div className="partido-container">
         <div className="selector-local">
           <h5 className="elegir-equipo">Local</h5>
-          <SelectorEquipos onSelectedTeam={setEquipoLocal} />
+          <SelectorEquipos onSelectedTeam={setEquipoLocal} selectedTeam={equipoLocal}/>
         </div>
 
         <div className="seleccion-resumen">
@@ -74,7 +74,7 @@ const Penales: React.FC = () => {
 
         <div className="selector-visitante">
           <h5 className="elegir-equipo">Visitante</h5>
-          <SelectorEquipos onSelectedTeam={setEquipoVisitante} />
+          <SelectorEquipos onSelectedTeam={setEquipoVisitante} selectedTeam={equipoVisitante}/>
         </div>
       </div>
     </div>
