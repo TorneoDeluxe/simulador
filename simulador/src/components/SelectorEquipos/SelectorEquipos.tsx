@@ -24,9 +24,10 @@ interface Country {
 
 type Props = {
   onSelectedTeam: (team: Team) => void;
+  selectedTeam?: Team | null;
 };
 
-const SelectorEquipos: React.FC<Props> = ({ onSelectedTeam }) => {
+const SelectorEquipos: React.FC<Props> = ({ onSelectedTeam, selectedTeam }) => {
   const [countries, setCountries] = useState<Country[]>([]);
   const [selectedCountryIndex, setSelectedCountryIndex] = useState(1);
   const [selectedLeagueIndex, setSelectedLeagueIndex] = useState(0);
@@ -55,6 +56,48 @@ const SelectorEquipos: React.FC<Props> = ({ onSelectedTeam }) => {
 
     setCountries(countriesWithLogos);
   }, []);
+
+  useEffect(() => {
+    if (!selectedTeam || countries.length === 0) return;
+
+    const countryIndex = countries.findIndex((country) =>
+      country.leagues.some((league) =>
+        league.teams?.some((team) => team.name === selectedTeam.name)
+      )
+    );
+
+    if (countryIndex === -1) return;
+
+    const leagueIndex = countries[countryIndex].leagues.findIndex((league) =>
+      league.teams?.some((team) => team.name === selectedTeam.name)
+    );
+
+    if (leagueIndex === -1) return;
+
+    setSelectedCountryIndex(countryIndex);
+    setSelectedLeagueIndex(leagueIndex);
+  }, [countries, selectedTeam]);
+
+  useEffect(() => {
+    if (!selectedTeam || countries.length === 0) return;
+
+    const countryIndex = countries.findIndex((country) =>
+      country.leagues.some((league) =>
+        league.teams?.some((team) => team.name === selectedTeam.name)
+      )
+    );
+
+    if (countryIndex === -1) return;
+
+    const leagueIndex = countries[countryIndex].leagues.findIndex((league) =>
+      league.teams?.some((team) => team.name === selectedTeam.name)
+    );
+
+    if (leagueIndex === -1) return;
+
+    setSelectedCountryIndex(countryIndex);
+    setSelectedLeagueIndex(leagueIndex);
+  }, [countries, selectedTeam]);
 
   // Equipos que tienen escudo en .webp en lugar de .png
 const WEBP_TEAMS_BY_COUNTRY: Record<string, string[]> = {
