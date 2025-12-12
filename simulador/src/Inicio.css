@@ -11,7 +11,7 @@
   --radius: 20px;
   --speed: 200ms;
 
-  min-height: 100vh;
+  max-height: 100vh;
   padding: clamp(24px, 4vw, 48px);
   display: flex;
   flex-direction: column;
@@ -38,7 +38,6 @@
 .inicio-page__grid {
   list-style: none;
   padding: 0;
-  margin: 32px auto 0;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: clamp(18px, 3vw, 28px);
@@ -131,11 +130,17 @@
   justify-items: start;
   text-align: left;
   min-height: 0;
-  padding: clamp(20px, 4vw, 28px);
+  padding: clamp(16px, 3vw, 22px);
   gap: 14px;
 }
 
 .inicio-page__editCopy {
   display: grid;
   gap: 4px;
+  background: none !important;
+  background-color: transparent !important;
+}
+
+.inicio-page__card--edit .inicio-page__icon {
+  font-size: clamp(40px, 6vw, 60px);
 }
