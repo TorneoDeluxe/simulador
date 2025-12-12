@@ -247,7 +247,6 @@ const EditarEquipos: React.FC = () => {
                   <FaSearch aria-hidden />
                   <div>
                     <h2>Buscar por nombre</h2>
-                    <p>Escribí el nombre del club para filtrar al instante.</p>
                   </div>
              </div>
                 <div className="editar-panel__search">
@@ -347,9 +346,12 @@ const EditarEquipos: React.FC = () => {
               <form className="editar-form" onSubmit={handleSubmit}>
                 <div className="editar-form__team">
                   <img src={selectedTeam.logo} alt="Escudo" />
-                  <div>
+                  <div className="editar-form__teamInfo">
                     <p className="editar-form__teamName">{selectedTeam.name}</p>
                     <p className="editar-form__teamMeta">{selectedTeam.pais} · {selectedTeam.ligaNombre}</p>
+                  </div>
+                  <div className="editar-form__teamMedia" aria-label="Media actual">
+                    {selectedTeam.media}
                   </div>
                 </div>
                 <label className="editar-form__field">

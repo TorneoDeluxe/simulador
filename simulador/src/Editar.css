@@ -13,7 +13,6 @@
 .editar-page {
   min-height: 100vh;
   padding: clamp(20px, 3vw, 36px);
-  background: radial-gradient(85% 85% at 50% 20%, var(--editar-bg2) 0%, var(--editar-bg) 60%);
   color: var(--editar-text);
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
@@ -59,21 +58,6 @@
   color: var(--editar-muted);
 }
 
-.editar-page__badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  background: var(--editar-card);
-  border: 1px solid var(--editar-border);
-  border-radius: var(--editar-radius);
-  color: var(--editar-text);
-  box-shadow: var(--editar-shadow);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-weight: 700;
-}
-
 .editar-page__layout {
   display: grid;
   grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
@@ -88,7 +72,6 @@
 }
 
 .editar-panel {
-  background: var(--editar-card);
   border: 1px solid var(--editar-border);
   border-radius: var(--editar-radius);
   padding: 18px;
@@ -105,7 +88,6 @@
 
 .editar-toggle {
   display: inline-flex;
-  background: var(--editar-card);
   border: 1px solid var(--editar-border);
   border-radius: 12px;
   padding: 6px;
@@ -196,7 +178,6 @@
 
 .editar-team-card {
   border: 1px solid var(--editar-border);
-  background: rgba(255, 255, 255, 0.03);
   border-radius: 12px;
   padding: 10px 12px;
   color: var(--editar-text);
@@ -216,7 +197,6 @@
 
 .editar-team-card.is-active {
   border-color: var(--editar-highlight);
-  background: rgba(221, 181, 4, 0.1);
 }
 
 .editar-team-card__info {
@@ -285,6 +265,21 @@
 .editar-form__teamMeta {
   margin: 2px 0 0;
   color: var(--editar-muted);
+}
+
+.editar-form__teamInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.editar-form__teamMedia {
+  margin-left: auto;
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--editar-highlight);
+  min-width: 44px;
+  text-align: start;
 }
 
 .editar-form__field {
