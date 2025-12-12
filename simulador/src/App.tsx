@@ -1,13 +1,14 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import Inicio from './Inicio.tsx';
-import Partido from './Partido.tsx';
-import Score from './components/Score/Score.tsx';
-import Penalties from './components/Penalties.tsx';
-import Penales from './PenalesSelector.tsx';
+import Inicio from "./Inicio.tsx";
+import Partido from "./Partido.tsx";
+import Score from "./components/Score/Score.tsx";
+import Penalties from "./components/Penalties.tsx";
+import Penales from "./PenalesSelector.tsx";
+import EditarEquipos from "./EditarEquipos.tsx";
 
-const App: React.FC = () =>  {
+const App: React.FC = () => {
   return (
     <Router>
       <Routes>
@@ -16,9 +17,10 @@ const App: React.FC = () =>  {
         <Route path="/penales" element={<Penales />} />
         <Route path="/penales/simulacion" element={<Penalties />} />
         <Route path="/partido/simulacion" element={<Score />} />
+        <Route path="/editar" element={<EditarEquipos />} />
       </Routes>
     </Router>
-  ) 
-}
+  );
+};
 
 export default App;

@@ -117,3 +117,25 @@
 .inicio-page__hint {
   background: none !important;
 }
+
+.inicio-page__edit {
+  width: 100%;
+  max-width: 920px;
+  margin-top: clamp(8px, 2vw, 16px);
+}
+
+.inicio-page__card--edit {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  justify-items: start;
+  text-align: left;
+  min-height: 0;
+  padding: clamp(20px, 4vw, 28px);
+  gap: 14px;
+}
+
+.inicio-page__editCopy {
+  display: grid;
+  gap: 4px;
+}
