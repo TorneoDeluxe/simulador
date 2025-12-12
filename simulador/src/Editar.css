@@ -76,8 +76,15 @@
 
 .editar-page__layout {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
   gap: 18px;
+  align-items: start;
+}
+
+.editar-page__content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
 .editar-panel {
@@ -92,7 +99,34 @@
 }
 
 .editar-panel--form {
-  grid-column: 1 / -1;
+  position: sticky;
+  top: 16px;
+}
+
+.editar-toggle {
+  display: inline-flex;
+  background: var(--editar-card);
+  border: 1px solid var(--editar-border);
+  border-radius: 12px;
+  padding: 6px;
+  box-shadow: var(--editar-shadow);
+  gap: 6px;
+}
+
+.editar-toggle__option {
+  border: none;
+  background: transparent;
+  color: var(--editar-text);
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.editar-toggle__option.is-active {
+  background: rgba(221, 181, 4, 0.12);
+  color: var(--editar-highlight);
 }
 
 .editar-panel__header {
@@ -154,6 +188,10 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 10px;
+}
+
+.editar-team-grid--wide {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
 
 .editar-team-card {
@@ -298,7 +336,11 @@
     align-items: flex-start;
   }
 
+  .editar-page__layout {
+    grid-template-columns: 1fr;
+  }
+
   .editar-panel--form {
-    grid-column: auto;
+    position: static;
   }
 }

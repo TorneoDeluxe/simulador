@@ -51,6 +51,7 @@ const EditarEquipos: React.FC = () => {
   const [status, setStatus] = useState<{ type: "success" | "error" | ""; message: string }>({ type: "", message: "" });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [searchMode, setSearchMode] = useState<"name" | "league">("league");
 
   const selectedCountry = countries[selectedCountryIndex];
   const selectedLeague = selectedCountry?.leagues[selectedLeagueIndex];
@@ -219,95 +220,121 @@ const EditarEquipos: React.FC = () => {
         <div className="editar-page__empty">Cargando equipos...</div>
       ) : (
         <div className="editar-page__layout">
-          <section className="editar-panel">
-            <div className="editar-panel__header">
-              <FaSearch aria-hidden />
-              <div>
-                <h2>Buscar por nombre</h2>
-              </div>
-            </div>
-            <div className="editar-panel__search">
-              <input
-                type="text"
-                placeholder="Ej: Ars..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                aria-label="Buscar equipo por nombre"
-              />
-            </div>
-            <div className="editar-panel__results" aria-live="polite">
-              {searchTerm && filteredTeams.length === 0 && (
-                <p className="editar-page__empty">No hay equipos que coincidan con tu búsqueda.</p>
-              )}
-              <div className="editar-team-grid">
-                {filteredTeams.map((team) => (
-                  <button
-                    key={`${team.id ?? team.name}-search`}
-                    className={`editar-team-card ${selectedTeam?.name === team.name ? "is-active" : ""}`}
-                    onClick={() => handleTeamSelection(team)}
-                  >
-                    <div className="editar-team-card__info">
-                      <span className="editar-team-card__name">{team.name}</span>
-                      <span className="editar-team-card__meta">{team.pais} · {team.ligaNombre}</span>
-                    </div>
-                    <span className="editar-team-card__media">{team.media}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          <section className="editar-panel">
-            <div className="editar-panel__header">
-              <FaEdit aria-hidden />
-              <div>
-                <h2>Seleccionar por liga</h2>
-              </div>
-            </div>
-            <div className="editar-panel__selectors">
-              <label>
-                <span>País</span>
-                <select
-                  value={selectedCountryIndex}
-                  onChange={(e) => handleCountryChange(Number(e.target.value))}
-                >
-                  {countries.map((country, index) => (
-                    <option key={country.name} value={index}>
-                      {country.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                <span>Liga</span>
-                <select
-                  value={selectedLeagueIndex}
-                  onChange={(e) => handleLeagueChange(Number(e.target.value))}
-                >
-                  {selectedCountry?.leagues.map((league, index) => (
-                    <option key={league.id} value={index}>
-                      {league.nombre}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            </div>
-            <div className="editar-team-grid">
-              {selectedLeague?.teams.map((team) => (
+          <div className="editar-page__content">
+            <div className="editar-toggle" role="tablist" aria-label="Modo de búsqueda">
                 <button
-                  key={`${team.id ?? team.name}-league`}
-                  className={`editar-team-card ${selectedTeam?.name === team.name ? "is-active" : ""}`}
-                  onClick={() => handleTeamSelection(team)}
+                  type="button"
+                  role="tab"
+                  aria-selected={searchMode === "name"}
+                  className={`editar-toggle__option ${searchMode === "name" ? "is-active" : ""}`}
+                  onClick={() => setSearchMode("name")}
                 >
-                  <div className="editar-team-card__info">
-                    <span className="editar-team-card__name">{team.name}</span>
-                    <span className="editar-team-card__meta">{team.pais} · {team.ligaNombre}</span>
-                  </div>
-                  <span className="editar-team-card__media">{team.media}</span>
+                  Buscar por nombre
                 </button>
-              ))}
-            </div>
-          </section>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={searchMode === "league"}
+                  className={`editar-toggle__option ${searchMode === "league" ? "is-active" : ""}`}
+                  onClick={() => setSearchMode("league")}
+                >
+                  Buscar por liga
+                </button>
+              </div>
+              {searchMode === "name" ? (
+              <section className="editar-panel">
+                <div className="editar-panel__header">
+                  <FaSearch aria-hidden />
+                  <div>
+                    <h2>Buscar por nombre</h2>
+                    <p>Escribí el nombre del club para filtrar al instante.</p>
+                  </div>
+             </div>
+                <div className="editar-panel__search">
+                  <input
+                    type="text"
+                    placeholder="Ej: Ars..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    aria-label="Buscar equipo por nombre"
+                  />
+                </div>
+                <div className="editar-panel__results" aria-live="polite">
+                  {searchTerm && filteredTeams.length === 0 && (
+                    <p className="editar-page__empty">No hay equipos que coincidan con tu búsqueda.</p>
+                  )}
+                  <div className="editar-team-grid">
+                    {filteredTeams.map((team) => (
+                      <button
+                        key={`${team.id ?? team.name}-search`}
+                        className={`editar-team-card ${selectedTeam?.name === team.name ? "is-active" : ""}`}
+                        onClick={() => handleTeamSelection(team)}
+                      >
+                        <div className="editar-team-card__info">
+                          <span className="editar-team-card__name">{team.name}</span>
+                          <span className="editar-team-card__meta">{team.pais} · {team.ligaNombre}</span>
+                        </div>
+                        <span className="editar-team-card__media">{team.media}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </section>
+            ) : (
+              <section className="editar-panel editar-panel--league">
+                <div className="editar-panel__header">
+                  <FaEdit aria-hidden />
+                  <div>
+                    <h2>Seleccionar por liga</h2>
+                    <p>Elegí país y competición para ver todos los clubes.</p>
+                  </div>
+                </div>
+                <div className="editar-panel__selectors">
+                  <label>
+                    <span>País</span>
+                    <select
+                      value={selectedCountryIndex}
+                      onChange={(e) => handleCountryChange(Number(e.target.value))}
+                    >
+                      {countries.map((country, index) => (
+                        <option key={country.name} value={index}>
+                          {country.name}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    <span>Liga</span>
+                    <select
+                      value={selectedLeagueIndex}
+                      onChange={(e) => handleLeagueChange(Number(e.target.value))}
+                    >
+                      {selectedCountry?.leagues.map((league, index) => (
+                        <option key={league.id} value={index}>
+                          {league.nombre}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
+                <div className="editar-team-grid editar-team-grid--wide">
+                  {selectedLeague?.teams.map((team) => (
+                    <button
+                      key={`${team.id ?? team.name}-league`}
+                      className={`editar-team-card ${selectedTeam?.name === team.name ? "is-active" : ""}`}
+                      onClick={() => handleTeamSelection(team)}
+                    >
+                      <div className="editar-team-card__info">
+                        <span className="editar-team-card__name">{team.name}</span>
+                        <span className="editar-team-card__meta">{team.pais} · {team.ligaNombre}</span>
+                      </div>
+                      <span className="editar-team-card__media">{team.media}</span>
+                    </button>
+                  ))}
+                </div>
+              </section>
+            )}
+          </div>
 
           <section className="editar-panel editar-panel--form">
             <div className="editar-panel__header">
