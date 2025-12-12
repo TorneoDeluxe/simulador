@@ -38,7 +38,7 @@ const Inicio: React.FC = () => {
           <div className="inicio-page__icon"><FaEdit /></div>
           <div className="inicio-page__editCopy">
             <h2 className="inicio-page__cardTitle">Editar</h2>
-            <p className="inicio-page__hint">Ajustá las medias de los clubes</p>
+            <p className="inicio-page__hint">Modificar ligas y medias de clubes</p>
           </div>
         </Link>
       </div>

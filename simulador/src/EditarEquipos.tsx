@@ -291,7 +291,7 @@ const EditarEquipos: React.FC = () => {
                 <div className="editar-panel__selectors">
                   <label>
                     <span>País</span>
-                    <select
+                    <select className="editar-panel__select"
                       value={selectedCountryIndex}
                       onChange={(e) => handleCountryChange(Number(e.target.value))}
                     >
@@ -304,7 +304,7 @@ const EditarEquipos: React.FC = () => {
                   </label>
                   <label>
                     <span>Liga</span>
-                    <select
+                    <select className="editar-panel__select"
                       value={selectedLeagueIndex}
                       onChange={(e) => handleLeagueChange(Number(e.target.value))}
                     >
@@ -337,9 +337,9 @@ const EditarEquipos: React.FC = () => {
 
           <section className="editar-panel editar-panel--form">
             <div className="editar-panel__header">
-              <FaSave aria-hidden />
+              <FaEdit aria-hidden />
               <div>
-                <h2>Actualizar media</h2>
+                <h2>Editar media</h2>
               </div>
             </div>
             {selectedTeam ? (

@@ -234,6 +234,11 @@
   font-weight: 600;
 }
 
+.editar-panel__select {
+  width: 50%;
+  align-self: flex-start;
+}
+
 .editar-form {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -286,6 +291,12 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+
+.editar-form__helper {
+  margin: 0;
+  color: var(--editar-muted);
+  font-size: 13px;
 }
 
 .editar-form__status {
