@@ -1,6 +1,6 @@
 import React, { FormEvent, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { FaArrowLeft, FaEdit, FaSave, FaSearch } from "react-icons/fa";
+import { FaArrowLeft, FaEdit, FaSearch } from "react-icons/fa";
 import "./Editar.css";
 
 type Team = {
@@ -355,7 +355,7 @@ const EditarEquipos: React.FC = () => {
                   </div>
                 </div>
                 <label className="editar-form__field">
-                  <span>Nueva media (1 a 99)</span>
+                  <span>Media (entre 1 y 99)</span>
                   <input
                     type="number"
                     min={1}
