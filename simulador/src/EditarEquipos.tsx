@@ -209,7 +209,7 @@ const EditarEquipos: React.FC = () => {
     <main className="editar-page">
       <header className="editar-page__header">
         <div className="editar-page__titleBlock">
-          <Link to="/" className="editar-page__back">
+          <Link to="/" className="editar-page__back backbutton">
             <FaArrowLeft aria-hidden /> Volver a Inicio
           </Link>
           <h1 className="editar-page__title">Editar equipos</h1>

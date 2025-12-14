@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import SelectorEquipos from "./components/SelectorEquipos/SelectorEquipos";
 import "./components/Partido.css";
+import { FaArrowLeft } from "react-icons/fa";
 
 type Team = {
   name: string;
@@ -35,7 +36,9 @@ const Penales: React.FC = () => {
 
   return (
     <div>
-      <button className="backbutton" onClick={volverAInicio}>Volver a Inicio</button>
+      <button className="backbutton" onClick={volverAInicio}>
+        <FaArrowLeft aria-hidden />
+        Volver a Inicio</button>
       <div className="titulo">
         <span>Elegir equipos para penales</span>
       </div>
