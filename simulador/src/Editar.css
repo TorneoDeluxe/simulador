@@ -101,7 +101,7 @@
   border-radius: 12px;
   padding: 6px;
   box-shadow: var(--editar-shadow);
-  gap: 6px;
+  margin-bottom: 1%;
 }
 
 .editar-toggle__option {
@@ -181,7 +181,6 @@
   padding: 10px;
   border: 1px solid var(--editar-border);
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.04);
   cursor: grab;
   gap: 10px;
 }

@@ -374,14 +374,14 @@ const EditarEquipos: React.FC = () => {
           <Link to="/" className="editar-page__back backbutton">
             <FaArrowLeft aria-hidden /> Volver a Inicio
           </Link>
-          <h1 className="editar-page__title">Editar clubes</h1>
+          <h1 className="editar-page__title">Editar</h1>
           <p className="editar-page__subtitle">
             Actualizá medias individuales o mové equipos entre ligas de una misma federación.
           </p>
         </div>
       </header>
 
-            <div className="editar-toggle" role="tablist" aria-label="Modo de edición">
+      <div className="editar-toggle" role="tablist" aria-label="Modo de edición">
         <button
           type="button"
           role="tab"
@@ -646,7 +646,7 @@ const EditarEquipos: React.FC = () => {
                                 <img src={team.logo} alt="Escudo" />
                                 <div>
                                   <p className="editar-league__teamName">{team.name}</p>
-                                  <span className="editar-league__teamMeta">Media {team.media}</span>
+                                  <span className="editar-league__teamMeta">Media: {team.media}</span>
                                 </div>
                               </div>
                               <div className="editar-league__teamActions">
