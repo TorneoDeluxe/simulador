@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { GiSoccerKick, GiGoalKeeper } from "react-icons/gi";
+import { FaEdit } from "react-icons/fa";
 import "./Inicio.css";
 
 const Inicio: React.FC = () => {
@@ -27,12 +28,20 @@ const Inicio: React.FC = () => {
             <p className="inicio-page__hint">Serie desde los 12 pasos</p>
           </Link>
         </li>
-        <li style={{ margin: '10px 0' }}>
-          <Link to="/editar" style={{ textDecoration: 'none', fontSize: '18px' }}>
-            Editar (en construcción)
-          </Link>
-        </li>
       </ul>
+      <div className="inicio-page__edit">
+        <Link
+          to="/editar"
+          className="inicio-page__card inicio-page__card--edit"
+          aria-label="Editar equipos"
+        >
+          <div className="inicio-page__icon"><FaEdit /></div>
+          <div className="inicio-page__editCopy">
+            <h2 className="inicio-page__cardTitle">Editar</h2>
+            <p className="inicio-page__hint">Modificar ligas y medias de clubes</p>
+          </div>
+        </Link>
+      </div>
     </main>
   );
 };

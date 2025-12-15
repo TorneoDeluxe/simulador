@@ -1,5 +1,17 @@
 .backbutton{
   margin-left: 1rem;
+  padding: 8px 12px;
+  border: 1.5px solid #ddb504;
+  border-radius: 10px;
+  background: transparent;
+  font-weight: 700;
+  opacity: 0.8;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.backbutton:hover{
+  opacity: 1;
 }
 
 .selector-equipos {

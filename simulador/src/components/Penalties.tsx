@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './Penalties.css';
+import { FaArrowLeft } from 'react-icons/fa';
 
 interface PenaltyRound {
   teamA: boolean | null;
@@ -471,7 +472,9 @@ const Penalties: React.FC = () => {
 
   return (
     <div className="penalties-page">
-      <button className="backbutton" onClick={volverASelector}>Volver</button>
+      <button className="backbutton" onClick={volverASelector}>
+        <FaArrowLeft aria-hidden />
+        Volver</button>
       <h1>Tanda de Penales</h1>
       <div className="penalties-container">
         <div className="settings">

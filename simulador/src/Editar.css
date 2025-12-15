@@ -1,0 +1,576 @@
+:root {
+  --editar-bg: #0e3a0e;
+  --editar-bg2: #145f0a;
+  --editar-card: rgba(255, 255, 255, 0.06);
+  --editar-border: rgba(255, 255, 255, 0.15);
+  --editar-highlight: #ddb504;
+  --editar-text: #f3f3f3;
+  --editar-muted: rgba(255, 255, 255, 0.7);
+  --editar-radius: 16px;
+  --editar-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+}
+
+.editar-page {
+  min-height: 100vh;
+  padding: clamp(20px, 3vw, 36px);
+  padding-top: calc(clamp(20px, 3vw, 36px) / 2);
+  color: var(--editar-text);
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.editar-page__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.editar-page__titleBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.backbutton,
+.editar-page__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1.5px solid #ddb504;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--editar-text);
+  text-decoration: none;
+  font-weight: 700;
+  opacity: 0.8;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.backbutton:hover,
+.editar-page__back:hover {
+  opacity: 1;
+}
+
+.editar-page__title {
+  margin: 0;
+  font-size: clamp(26px, 4vw, 34px);
+  color: var(--editar-highlight);
+}
+
+.editar-page__subtitle {
+  margin: 0;
+  max-width: 720px;
+  color: var(--editar-muted);
+}
+
+.editar-page__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.editar-page__content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.editar-panel {
+  border: 1px solid var(--editar-border);
+  border-radius: var(--editar-radius);
+  padding: 18px;
+  box-shadow: var(--editar-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.editar-panel--form {
+  position: sticky;
+  top: 16px;
+}
+
+.editar-toggle {
+  display: inline-flex;
+  border: 1px solid var(--editar-border);
+  border-radius: 12px;
+  padding: 6px;
+  box-shadow: var(--editar-shadow);
+  margin-bottom: 1%;
+}
+
+.editar-toggle__option {
+  border: none;
+  background: transparent;
+  color: var(--editar-text);
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.editar-toggle__option.is-active {
+  background: rgba(221, 181, 4, 0.12);
+  color: var(--editar-highlight);
+}
+
+.editar-league__board {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 14px;
+  align-items: start;
+}
+
+.editar-league__category {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--editar-border);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: var(--editar-shadow);
+}
+
+.editar-league__categoryHeader {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.editar-league__categoryHeader h3 {
+  margin: 0;
+}
+
+.editar-league__lanes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.editar-league__lane {
+  border: 1px dashed var(--editar-border);
+  border-radius: 12px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.15);
+  min-height: 180px;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.editar-league__lane.is-hovered {
+  border-color: var(--editar-highlight);
+  background: rgba(221, 181, 4, 0.08);
+}
+
+.editar-league__laneHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.editar-league__laneHeaderInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.editar-league__laneHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.editar-league__laneTitle {
+  margin: 0;
+  font-weight: 800;
+}
+
+.editar-league__laneMeta,
+.editar-league__laneCategory {
+  color: var(--editar-muted);
+  font-size: 13px;
+}
+
+.editar-league__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border: 1px solid var(--editar-border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.editar-league__toggle:hover,
+.editar-league__toggle.is-open {
+  background: rgba(221, 181, 4, 0.12);
+  border-color: var(--editar-highlight);
+}
+
+.editar-league__toggleIcon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.editar-league__teamList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.editar-league__teamCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 10px;
+  border: 1px solid var(--editar-border);
+  border-radius: 10px;
+  cursor: grab;
+  gap: 10px;
+}
+
+.editar-league__teamCard:active {
+  cursor: grabbing;
+}
+
+.editar-league__teamInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.editar-league__teamInfo img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border: 1px solid var(--editar-border);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 5px;
+}
+
+.editar-league__teamText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.editar-league__teamHeader {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.editar-league__teamName {
+  margin: 0;
+  font-weight: 800;
+}
+
+.editar-league__teamMeta {
+  color: var(--editar-muted);
+  font-size: 13px;
+}
+
+.editar-league__teamActions {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.editar-league__action {
+  background: transparent;
+  border: 1px solid var(--editar-border);
+  color: var(--editar-text);
+  border-radius: 8px;
+  padding: 6px 8px;
+  cursor: pointer;
+}
+
+.editar-league__menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--editar-border);
+  background: #0e3a0e;
+  box-shadow: var(--editar-shadow);
+  z-index: 2;
+  min-width: 220px;
+}
+
+.editar-league__menuTitle {
+  margin: 0;
+  background: #0e3a0e;
+  color: var(--editar-muted);
+  font-size: 13px;
+}
+
+.editar-league__menu button {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--editar-text);
+  border: 1px solid var(--editar-border);
+  border-radius: 8px;
+  padding: 8px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.editar-league__menu button:hover {
+  border-color: var(--editar-highlight);
+}
+
+.editar-panel__header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.editar-panel__header svg {
+  font-size: 22px;
+  color: var(--editar-highlight);
+}
+
+.editar-panel h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.editar-panel p {
+  margin: 2px 0 0;
+  color: var(--editar-muted);
+  font-size: 14px;
+}
+
+.editar-panel__search input,
+.editar-panel__selectors select,
+.editar-form__field input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--editar-border);
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--editar-text);
+  outline: none;
+  font-size: 15px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.editar-panel__search input:focus,
+.editar-panel__selectors select:focus,
+.editar-form__field input:focus {
+  border-color: var(--editar-highlight);
+}
+
+.editar-panel__results {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.editar-page__hint,
+.editar-page__empty {
+  margin: 0;
+  color: var(--editar-muted);
+  font-size: 14px;
+}
+
+.editar-team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.editar-team-grid--wide {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.editar-team-card {
+  border: 1px solid var(--editar-border);
+  border-radius: 12px;
+  padding: 10px 12px;
+  color: var(--editar-text);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
+}
+
+.editar-team-card:hover,
+.editar-team-card:focus-visible {
+  border-color: var(--editar-highlight);
+  transform: translateY(-2px);
+}
+
+.editar-team-card.is-active {
+  border-color: var(--editar-highlight);
+}
+
+.editar-team-card__info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.editar-team-card__name {
+  font-weight: 700;
+}
+
+.editar-team-card__meta {
+  color: var(--editar-muted);
+  font-size: 13px;
+}
+
+.editar-team-card__media {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--editar-highlight);
+}
+
+.editar-panel__selectors {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+}
+
+.editar-panel__selectors label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 600;
+}
+
+.editar-panel__select {
+  width: 50%;
+  align-self: flex-start;
+}
+
+.editar-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+  align-items: center;
+}
+
+.editar-form__team {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.editar-form__team img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  border: 1px solid var(--editar-border);
+  padding: 8px;
+}
+
+.editar-form__teamName {
+  margin: 0;
+  font-weight: 800;
+}
+
+.editar-form__teamMeta {
+  margin: 2px 0 0;
+  color: var(--editar-muted);
+}
+
+.editar-form__teamInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.editar-form__teamMedia {
+  margin-left: auto;
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--editar-highlight);
+  min-width: 44px;
+  text-align: start;
+}
+
+.editar-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.editar-form__helper {
+  margin: 0;
+  color: var(--editar-muted);
+  font-size: 13px;
+}
+
+.editar-form__status {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(221, 181, 4, 0.1);
+  border: 1px solid var(--editar-highlight);
+  color: var(--editar-text);
+}
+
+.editar-form__status.is-error {
+  background: rgba(255, 99, 99, 0.1);
+  border-color: #ff9b9b;
+  color: #ffdede;
+}
+
+.editar-form__submit {
+  padding: 12px 14px;
+  background: linear-gradient(90deg, #ddb504, #f1d451);
+  color: #0f1b0f;
+  font-weight: 800;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.editar-form__submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.editar-form__submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .editar-page__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .editar-page__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .editar-panel--form {
+    position: static;
+  }
+}

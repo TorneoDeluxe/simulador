@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./Score.css";
+import { FaArrowLeft } from "react-icons/fa";
 
 interface Chance {
     result: string;
@@ -359,7 +360,9 @@ const Score = () => {
   
     return (
         <div>
-            <button className="backbutton" onClick={volverAPartido}>Volver</button>
+            <button className="backbutton" onClick={volverAPartido}>
+                <FaArrowLeft aria-hidden />
+                Volver</button>
             <div className="intro-clubes">
                 <div className="team-intro">
                     <h4>Local</h4>
