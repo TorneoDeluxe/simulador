@@ -58,6 +58,7 @@ const EditarEquipos: React.FC = () => {
   const [draggedTeam, setDraggedTeam] = useState<{ teamId: number; fromLeagueId: number } | null>(null);
   const [hoveredLeagueId, setHoveredLeagueId] = useState<number | null>(null);
   const [contextMenu, setContextMenu] = useState<{ teamId: number; leagueId: number } | null>(null);
+  const [expandedLeagues, setExpandedLeagues] = useState<Record<number, boolean>>({});
 
   const selectedCountry = countries[selectedCountryIndex];
   const selectedLeague = selectedCountry?.leagues[selectedLeagueIndex];
@@ -125,6 +126,16 @@ const EditarEquipos: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    setExpandedLeagues((prevExpanded) => {
+      const nextExpanded: Record<number, boolean> = {};
+      leaguesInSelectedCountry.forEach((league) => {
+        nextExpanded[league.id] = prevExpanded[league.id] ?? true;
+      });
+      return nextExpanded;
+    });
+  }, [leaguesInSelectedCountry]);
+
+  useEffect(() => {
     if (selectedTeam) {
       setMediaInput(String(selectedTeam.media));
     }
@@ -153,6 +164,13 @@ const EditarEquipos: React.FC = () => {
         leagues: [...leagues].sort((a, b) => a.nombre.localeCompare(b.nombre)),
       }));
   }, [countries, selectedCountryIndex]);
+
+  const toggleLeague = (leagueId: number) => {
+    setExpandedLeagues((prev) => ({
+      ...prev,
+      [leagueId]: !prev[leagueId],
+    }));
+  };
 
   const handleTeamSelection = (team: Team) => {
     setSelectedTeam(team);
@@ -594,7 +612,7 @@ const EditarEquipos: React.FC = () => {
             </label>
           </div>
           <p className="editar-page__hint">
-            Arrastrá un club hacia otra liga de la misma categoría o usá el menú contextual para moverlo.
+            Arrastrá un club hacia otra liga de la misma categoría o usá el menú para moverlo.
           </p>
           {leagueStatus.message && (
             <p
@@ -615,77 +633,97 @@ const EditarEquipos: React.FC = () => {
                     <span>{leagues.length} {leagues.length === 1 ? "liga" : "ligas"}</span>
                   </div>
                   <div className="editar-league__lanes">
-                    {leagues.map((league) => (
-                      <div
-                        key={league.id}
-                        className={`editar-league__lane ${hoveredLeagueId === league.id ? "is-hovered" : ""}`}
-                        onDragOver={(event) => handleDragOver(event, league.id)}
-                        onDragLeave={handleDragLeave}
-                        onDrop={(event) => handleDrop(event, league.id)}
-                      >
-                        <div className="editar-league__laneHeader">
-                          <div>
-                            <p className="editar-league__laneTitle">{league.nombre}</p>
-                            <span className="editar-league__laneMeta">Equipos: {league.teams.length}</span>
+                    {leagues.map((league) => {
+                      const isLeagueExpanded = expandedLeagues[league.id] ?? true;
+
+                      return (
+                        <div
+                          key={league.id}
+                          className={`editar-league__lane ${hoveredLeagueId === league.id ? "is-hovered" : ""}`}
+                          onDragOver={(event) => handleDragOver(event, league.id)}
+                          onDragLeave={handleDragLeave}
+                          onDrop={(event) => handleDrop(event, league.id)}
+                        >
+                          <div className="editar-league__laneHeader">
+                            <div className="editar-league__laneHeaderInfo">
+                              <p className="editar-league__laneTitle">{league.nombre}</p>
+                              <span className="editar-league__laneMeta">Equipos: {league.teams.length}</span>
+                            </div>
+                            <div className="editar-league__laneHeaderActions">
+                              <span className="editar-league__laneCategory">Cat. {league.categoria}</span>
+                              <button
+                                type="button"
+                                className={`editar-league__toggle ${isLeagueExpanded ? "is-open" : ""}`}
+                                aria-expanded={isLeagueExpanded}
+                                aria-controls={`league-${league.id}-teams`}
+                                onClick={() => toggleLeague(league.id)}
+                              >
+                                <span className="editar-league__toggleIcon" aria-hidden>
+                                  {isLeagueExpanded ? "▾" : "▸"}
+                                </span>
+                                {isLeagueExpanded ? "Ocultar" : "Mostrar"}
+                              </button>
+                            </div>
                           </div>
-                          <span className="editar-league__laneCategory">Cat. {league.categoria}</span>
-                        </div>
-                        <div className="editar-league__teamList">
-                          {league.teams.length === 0 && (
-                            <p className="editar-page__empty">Arrastrá un club a esta liga</p>
-                          )}
-                          {league.teams.map((team) => (
-                            <div
-                              key={`${team.id ?? team.name}-lane`}
-                              className="editar-league__teamCard"
-                              draggable
-                              onDragStart={() => handleDragStart(team, league.id)}
-                              onContextMenu={(event) => team.id && openContextMenu(event, team.id, league.id)}
-                            >
-                              <div className="editar-league__teamInfo">
-                                <img src={team.logo} alt="Escudo" />
-                                <div>
-                                  <p className="editar-league__teamName">{team.name}</p>
-                                  <span className="editar-league__teamMeta">Media: {team.media}</span>
-                                </div>
-                              </div>
-                              <div className="editar-league__teamActions">
-                                <button
-                                  type="button"
-                                  className="editar-league__action"
-                                  onClick={(event) => team.id && openContextMenu(event, team.id, league.id)}
+                          {isLeagueExpanded && (
+                            <div id={`league-${league.id}-teams`} className="editar-league__teamList">
+                              {league.teams.length === 0 && (
+                                <p className="editar-page__empty">Arrastrá un club a esta liga</p>
+                              )}
+                              {league.teams.map((team) => (
+                                <div
+                                  key={`${team.id ?? team.name}-lane`}
+                                  className="editar-league__teamCard"
+                                  draggable
+                                  onDragStart={() => handleDragStart(team, league.id)}
+                                  onContextMenu={(event) => team.id && openContextMenu(event, team.id, league.id)}
                                 >
-                                  ⋯
-                                </button>
-                                {contextMenu?.teamId === team.id && contextMenu?.leagueId === league.id && (
-                                  <div
-                                    className="editar-league__menu"
-                                    onClick={(event) => event.stopPropagation()}
-                                    onMouseLeave={() => setContextMenu(null)}
-                                  >
-                                    <p className="editar-league__menuTitle">Mover a:</p>
-                                    {leaguesInSelectedCountry
-                                      .filter((targetLeague) => targetLeague.id !== league.id)
-                                      .map((targetLeague) => (
-                                        <button
-                                          type="button"
-                                          key={`${team.id}-${targetLeague.id}`}
-                                          onClick={() => team.id && moveTeamToLeague(team.id, targetLeague.id)}
-                                        >
-                                          {targetLeague.nombre} (Cat. {targetLeague.categoria})
-                                        </button>
-                                      ))}
-                                    {leaguesInSelectedCountry.length === 1 && (
-                                      <span className="editar-page__empty">No hay otras ligas en este país</span>
+                                  <div className="editar-league__teamInfo">
+                                    <img src={team.logo} alt="Escudo" />
+                                    <div>
+                                      <p className="editar-league__teamName">{team.name}</p>
+                                      <span className="editar-league__teamMeta">Media: {team.media}</span>
+                                    </div>
+                                  </div>
+                                  <div className="editar-league__teamActions">
+                                    <button
+                                      type="button"
+                                      className="editar-league__action"
+                                      onClick={(event) => team.id && openContextMenu(event, team.id, league.id)}
+                                    >
+                                      ⋯
+                                    </button>
+                                    {contextMenu?.teamId === team.id && contextMenu?.leagueId === league.id && (
+                                      <div
+                                        className="editar-league__menu"
+                                        onClick={(event) => event.stopPropagation()}
+                                        onMouseLeave={() => setContextMenu(null)}
+                                      >
+                                        <p className="editar-league__menuTitle">Mover a:</p>
+                                        {leaguesInSelectedCountry
+                                          .filter((targetLeague) => targetLeague.id !== league.id)
+                                          .map((targetLeague) => (
+                                            <button
+                                              type="button"
+                                              key={`${team.id}-${targetLeague.id}`}
+                                              onClick={() => team.id && moveTeamToLeague(team.id, targetLeague.id)}
+                                            >
+                                              {targetLeague.nombre}
+                                            </button>
+                                          ))}
+                                        {leaguesInSelectedCountry.length === 1 && (
+                                          <span className="editar-page__empty">No hay otras ligas en este país</span>
+                                        )}
+                                      </div>
                                     )}
                                   </div>
-                                )}
-                              </div>
+                                </div>
+                              ))}
                             </div>
-                          ))}
+                          )}
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               ))

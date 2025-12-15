@@ -154,7 +154,20 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  gap: 8px;
   margin-bottom: 10px;
+}
+
+.editar-league__laneHeaderInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.editar-league__laneHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .editar-league__laneTitle {
@@ -166,6 +179,30 @@
 .editar-league__laneCategory {
   color: var(--editar-muted);
   font-size: 13px;
+}
+
+.editar-league__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border: 1px solid var(--editar-border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.editar-league__toggle:hover,
+.editar-league__toggle.is-open {
+  background: rgba(221, 181, 4, 0.12);
+  border-color: var(--editar-highlight);
+}
+
+.editar-league__toggleIcon {
+  font-size: 14px;
+  line-height: 1;
 }
 
 .editar-league__teamList {
@@ -248,6 +285,7 @@
 
 .editar-league__menuTitle {
   margin: 0;
+  background: #0e3a0e;
   color: var(--editar-muted);
   font-size: 13px;
 }
