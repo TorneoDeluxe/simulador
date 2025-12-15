@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { GiSoccerKick, GiGoalKeeper, FaEdit } from "./components/Icons";
+import { GiSoccerKick, GiGoalKeeper } from "react-icons/gi";
+import { FaEdit } from "react-icons/fa";
 import "./Inicio.css";
 
 const Inicio: React.FC = () => {

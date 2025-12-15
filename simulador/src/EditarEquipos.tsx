@@ -1,6 +1,6 @@
 import React, { FormEvent, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { FaArrowLeft, FaEdit, FaRandom, FaSearch } from "./components/Icons";
+import { FaArrowLeft, FaEdit, FaRandom, FaSearch } from "react-icons/fa";
 import "./Editar.css";
 import { getTeamLogoPath } from "./utils/logoPath";
 

@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./Score.css";
-import { FaArrowLeft } from "../Icons"; 
+import { FaArrowLeft } from "react-icons/fa";
 
 interface Chance {
     result: string;

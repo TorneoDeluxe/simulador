@@ -1,9 +1,8 @@
-// src/pages/Partido.tsx
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import SelectorEquipos from "./components/SelectorEquipos/SelectorEquipos";
 import "./components/Partido.css";
-import { FaArrowLeft } from "./components/Icons";
+import { FaArrowLeft } from "react-icons/fa";
 
 type Team = {
   name: string;
