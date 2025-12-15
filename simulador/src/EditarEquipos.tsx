@@ -680,9 +680,11 @@ const EditarEquipos: React.FC = () => {
                                 >
                                   <div className="editar-league__teamInfo">
                                     <img src={team.logo} alt="Escudo" />
-                                    <div>
-                                      <p className="editar-league__teamName">{team.name}</p>
-                                      <span className="editar-league__teamMeta">Media: {team.media}</span>
+                                    <div className="editar-league__teamText">
+                                      <div className="editar-league__teamHeader">
+                                        <p className="editar-league__teamName">{team.name}</p>
+                                        <span className="editar-league__teamMedia">- {team.media}</span>
+                                        </div>
                                     </div>
                                   </div>
                                   <div className="editar-league__teamActions">

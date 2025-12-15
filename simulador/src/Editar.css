@@ -120,7 +120,26 @@
   color: var(--editar-highlight);
 }
 
+.editar-league__board {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 14px;
+  align-items: start;
+}
 
+.editar-league__category {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--editar-border);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: var(--editar-shadow);
+}
+
+.editar-league__categoryHeader {
+  display: flex;
   align-items: baseline;
   gap: 10px;
   justify-content: space-between;
@@ -132,7 +151,7 @@
 
 .editar-league__lanes {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 12px;
 }
 
@@ -215,7 +234,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
+  padding: 8px 10px;
   border: 1px solid var(--editar-border);
   border-radius: 10px;
   cursor: grab;
@@ -233,18 +252,30 @@
 }
 
 .editar-league__teamInfo img {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   object-fit: contain;
   border: 1px solid var(--editar-border);
   border-radius: 8px;
   background: rgba(0, 0, 0, 0.25);
-  padding: 6px;
+  padding: 5px;
+}
+
+.editar-league__teamText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.editar-league__teamHeader {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
 }
 
 .editar-league__teamName {
   margin: 0;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .editar-league__teamMeta {
