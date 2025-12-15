@@ -2,6 +2,7 @@ import React, { FormEvent, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaArrowLeft, FaEdit, FaSearch } from "react-icons/fa";
 import "./Editar.css";
+import { getTeamLogoPath } from "./utils/logoPath";
 
 type Team = {
   id?: number;
@@ -56,11 +57,6 @@ const EditarEquipos: React.FC = () => {
   const selectedCountry = countries[selectedCountryIndex];
   const selectedLeague = selectedCountry?.leagues[selectedLeagueIndex];
 
-  const generateLogoPath = (name: string, country: string) => {
-    const sanitizedName = name.replace(/\s+/g, "_").replace(/[()]/g, "");
-    return new URL(`./assets/Escudos/${country}/${sanitizedName}.png`, import.meta.url).href;
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -83,7 +79,7 @@ const EditarEquipos: React.FC = () => {
             ligaId: eq.ligaId,
             ligaNombre: liga?.nombre ?? "",
             pais,
-            logo: generateLogoPath(eq.nombre, pais),
+            logo: getTeamLogoPath(eq.nombre, pais),
           };
         });
 

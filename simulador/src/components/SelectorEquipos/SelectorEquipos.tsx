@@ -1,6 +1,7 @@
 // src/components/SelectorEquipos/SelectorEquipos.tsx
 import React, { useEffect, useState } from "react";
 import "./SelectorEquipos.css";
+import { getTeamLogoPath } from "../../utils/logoPath";
 
 interface Team {
   name: string;
@@ -50,7 +51,7 @@ const SelectorEquipos: React.FC<Props> = ({ onSelectedTeam, selectedTeam }) => {
             .map((eq: any) => ({
               name: eq.nombre,
               media: eq.media,
-              logo: generateLogoPath(eq.nombre, liga.pais),
+              logo: getTeamLogoPath(eq.nombre, liga.pais),
             })),
         }));
 
@@ -98,11 +99,6 @@ const SelectorEquipos: React.FC<Props> = ({ onSelectedTeam, selectedTeam }) => {
     setSelectedCountryIndex(countryIndex);
     setSelectedLeagueIndex(leagueIndex);
   }, [countries, selectedTeam]);
-
-  const generateLogoPath = (name: string, country: string ) => {
-    const sanitizedName = name.replace(/\s+/g, "_").replace(/[()]/g, "");
-    return new URL(`../../assets/Escudos/${country}/${sanitizedName}.png`, import.meta.url).href;
-  };
 
   const handleSeleccion = (equipo: Team) => {
     onSelectedTeam(equipo);
