@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './Penalties.css';
-import { FaArrowLeft } from 'react-icons/fa';
+import { FaArrowLeft } from './Icons';
 
 interface PenaltyRound {
   teamA: boolean | null;
