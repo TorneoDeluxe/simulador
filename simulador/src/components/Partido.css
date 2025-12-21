@@ -16,6 +16,7 @@
     font-weight: bold;
     text-align: center;
     color: rgb(214, 118, 9);
+    margin: 1% !important;
 }
   
 .selector-local, .selector-visitante {
