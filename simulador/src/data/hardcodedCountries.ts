@@ -191,7 +191,7 @@ export const HARDCODED_COUNTRIES: HardcodedCountry[] = [
           { name: "Brown (Adrogué)", media: 59 },
           { name: "Sportivo Italiano", media: 59 },
           { name: "Tristán Suárez", media: 58 },
-          { name: "Argentino (Quilmes)", media: 56 },
+          { name: "Argentino de Quilmes", media: 56 },
           { name: "Deportivo Español", media: 58 },
           { name: "Cambaceres", media: 57 },
           { name: "Talleres (RdE)", media: 55 },
@@ -201,7 +201,7 @@ export const HARDCODED_COUNTRIES: HardcodedCountry[] = [
           { name: "Atlanta", media: 52 },
           { name: "Flandria", media: 51 },
           { name: "Berazategui", media: 51 },
-          { name: "Argentino (Rosario)", media: 48 },
+          { name: "Argentino de Rosario", media: 48 },
           { name: "Colegiales", media: 47 }
         ],
       },
@@ -211,8 +211,8 @@ export const HARDCODED_COUNTRIES: HardcodedCountry[] = [
         pais: "Argentina 2000-2001",
         categoria: 4,
         teams: [
-          { name: "JJ Urquiza", media: 53 },
-          { name: "Argentino (Merlo)", media: 52 },
+          { name: "J.J. Urquiza", media: 53 },
+          { name: "Argentino de Merlo", media: 52 },
           { name: "San Martín (Burzaco)", media: 53 },
           { name: "Ituzaingó", media: 52 },
           { name: "Excursionistas", media: 55 },
