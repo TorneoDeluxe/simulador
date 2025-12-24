@@ -12,6 +12,7 @@ type Team = {
   ligaId: number;
   ligaNombre: string;
   pais: string;
+  paisId?: number;
 };
 
 type League = {
@@ -39,6 +40,7 @@ type ApiTeam = {
   nombre: string;
   media: number;
   ligaId: number;
+  paisId?: number;
 };
 
 const EditarEquipos: React.FC = () => {
@@ -86,6 +88,7 @@ const EditarEquipos: React.FC = () => {
             ligaId: eq.ligaId,
             ligaNombre: liga?.nombre ?? "",
             pais,
+            paisId: eq.paisId,
             logo: getTeamLogoPath(eq.nombre, pais),
           };
         });
@@ -203,6 +206,7 @@ const EditarEquipos: React.FC = () => {
           nombre: selectedTeam.name,
           media: nuevaMedia,
           ligaId: selectedTeam.ligaId,
+          paisId: selectedTeam.paisId,
         }),
       });
 
@@ -315,6 +319,7 @@ const EditarEquipos: React.FC = () => {
           nombre: team.name,
           media: team.media,
           ligaId: targetLeague.id,
+          paisId: team.paisId,
         }),
       });
 
