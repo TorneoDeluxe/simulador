@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { GiSoccerKick, GiGoalKeeper } from "react-icons/gi";
+import { GiSoccerKick, GiGoalKeeper, GiLaurelsTrophy } from "react-icons/gi";
 import { FaEdit } from "react-icons/fa";
 import "./Inicio.css";
 
@@ -26,6 +26,14 @@ const Inicio: React.FC = () => {
             <div className="inicio-page__icon"><GiGoalKeeper /></div>
             <h2 className="inicio-page__cardTitle">Penales</h2>
             <p className="inicio-page__hint">Serie desde los 12 pasos</p>
+          </Link>
+        </li>
+
+              <li>
+          <Link to="/ligas" className="inicio-page__card" aria-label="Simular liga">
+            <div className="inicio-page__icon"><GiLaurelsTrophy /></div>
+            <h2 className="inicio-page__cardTitle">Ligas</h2>
+            <p className="inicio-page__hint">Simulación rápida por medias</p>
           </Link>
         </li>
       </ul>

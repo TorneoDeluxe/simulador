@@ -1,0 +1,199 @@
+.liga-page {
+  min-height: 100vh;
+  padding: 32px clamp(20px, 4vw, 56px);
+  background: radial-gradient(70% 70% at 50% 10%, #0f5c1a 0%, #06360c 60%);
+  color: #f5f5f5;
+}
+
+.liga-page .backbutton {
+  margin-bottom: 20px;
+}
+
+.liga-page__header {
+  max-width: 760px;
+  margin-bottom: 32px;
+}
+
+.liga-page__header h1 {
+  margin: 0 0 12px;
+  color: #f3d76d;
+}
+
+.liga-page__header p {
+  margin: 0;
+  opacity: 0.9;
+}
+
+.liga-page__selectors {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.liga-page__selector {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.liga-page__label {
+  display: block;
+  font-size: 13px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: #d6d6d6;
+  margin-bottom: 10px;
+}
+
+.liga-page__nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.liga-page__nav button {
+  background: #f3d76d;
+  border: none;
+  color: #0f3b15;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.liga-page__nav button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.liga-page__input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  padding: 8px 10px;
+  color: #f5f5f5;
+}
+
+.liga-page__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.liga-page__button {
+  background: #f3d76d;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-weight: 700;
+  color: #0f3b15;
+  cursor: pointer;
+}
+
+.liga-page__button--secondary {
+  background: transparent;
+  border: 1px solid #f3d76d;
+  color: #f3d76d;
+}
+
+.liga-page__button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.liga-page__content {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(240px, 1fr);
+  gap: 24px;
+}
+
+.liga-page__standings {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 18px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.liga-page__standings h2,
+.liga-page__summary h2 {
+  margin-top: 0;
+  color: #f3d76d;
+}
+
+.liga-page__standings ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.liga-page__standings li {
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.liga-page__standings li.is-champion {
+  border: 2px solid #f3d76d;
+  background: rgba(243, 215, 109, 0.2);
+}
+
+.liga-page__standings img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.liga-page__meta {
+  display: block;
+  font-size: 12px;
+  opacity: 0.8;
+  margin-top: 4px;
+}
+
+.liga-page__points {
+  font-weight: 700;
+}
+
+.liga-page__summary {
+  display: grid;
+  gap: 16px;
+  align-content: start;
+}
+
+.liga-page__summaryCard {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 14px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.liga-page__summaryCard h3 {
+  margin-top: 0;
+  color: #f3d76d;
+}
+
+.liga-page__summaryCard ul {
+  padding-left: 18px;
+  margin: 0;
+}
+
+.liga-page__empty {
+  margin: 0;
+  opacity: 0.7;
+}
+
+@media (max-width: 900px) {
+  .liga-page__content {
+    grid-template-columns: 1fr;
+  }
+}

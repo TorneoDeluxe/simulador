@@ -7,6 +7,7 @@ import Score from "./components/Score/Score.tsx";
 import Penalties from "./components/Penalties.tsx";
 import Penales from "./PenalesSelector.tsx";
 import EditarEquipos from "./EditarEquipos.tsx";
+import SimuladorLiga from "./SimuladorLiga.tsx";
 
 const App: React.FC = () => {
   return (
@@ -18,6 +19,7 @@ const App: React.FC = () => {
         <Route path="/penales/simulacion" element={<Penalties />} />
         <Route path="/partido/simulacion" element={<Score />} />
         <Route path="/editar" element={<EditarEquipos />} />
+        <Route path="/ligas" element={<SimuladorLiga />} />
       </Routes>
     </Router>
   );
