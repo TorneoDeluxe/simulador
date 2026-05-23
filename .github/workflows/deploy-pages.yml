@@ -3,7 +3,7 @@ name: Deploy Vite to GitHub Pages
 on:
   push:
     branches:
-      - main   # cambiá esto si tu rama es otra (ej: work)
+      - hardcoded-deluxe   # cambiá esto si tu rama es otra (ej: work)
   workflow_dispatch:
 
 permissions:
