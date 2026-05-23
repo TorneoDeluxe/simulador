@@ -502,7 +502,7 @@ const Penalties: React.FC = () => {
               </select>
             </div>
             {/* Opciones del usuario para participar */}
-            <div className="user-settings">
+           {/*  <div className="user-settings">
               <div>
                 <label>Patear penal </label>
                 <select
@@ -544,7 +544,7 @@ const Penalties: React.FC = () => {
                   </div>
                 </>
               )}
-            </div>
+            </div> */}
 
             <div className="penalties-actions">
               {!isFinished ? (

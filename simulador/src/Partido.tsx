@@ -35,7 +35,7 @@ const Partido: React.FC = () => {
     <div>
       <button className="backbutton" onClick={volverAInicio}>Volver a Inicio</button>
       <div className="titulo">
-        <span>Elegir equipos</span>
+        <span>Torneo Deluxe - Elegir equipos</span>
       </div>
       
       <div className="partido-container">

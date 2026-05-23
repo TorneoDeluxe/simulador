@@ -29,11 +29,32 @@ type Props = {
 
 const SelectorEquipos: React.FC<Props> = ({ onSelectedTeam, selectedTeam }) => {
   const [countries, setCountries] = useState<Country[]>([]);
-  const [selectedCountryIndex, setSelectedCountryIndex] = useState(1);
+  const [selectedCountryIndex, setSelectedCountryIndex] = useState(0);
   const [selectedLeagueIndex, setSelectedLeagueIndex] = useState(0);
 
   const selectedCountry = countries[selectedCountryIndex];
   const selectedLeague = selectedCountry?.leagues[selectedLeagueIndex];
+
+    const TORNEO_DELUXE_LOGO_MAP: Record<string, string> = {
+    "Knights of Plate": "Flamengo",
+    MHDP: "Palmeiras",
+    "FC Chavista Machado": "Fluminense",
+    "Concavito FC": "Athl._Paranaense",
+    Magnum: "Bahia",
+    "Fofisanos Artemis": "Cruzeiro",
+    "Atlético Nulty": "Coritiba",
+    "Los Langostos": "Vitória",
+    "Manchala FC": "Vasco da Gama",
+    "Sapos FC": "Santos",
+    GetaFFe: "Botafogo",
+    "Las Lobas": "RB_Bragantino",
+    "Allahu Akbar": "São Paulo",
+    Weiss: "Atlético Mineiro",
+    Powers: "Corinthians",
+    "Segarro Balompie": "Internacional",
+    "Patetico de Mandril": "Grêmio",
+    "Payo Chabacano": "Mirassol",
+  };
 
   useEffect(() => {
     // Transformo los datos hardcodeados en el mismo modelo que usa el componente
@@ -78,26 +99,26 @@ const SelectorEquipos: React.FC<Props> = ({ onSelectedTeam, selectedTeam }) => {
     setSelectedLeagueIndex(leagueIndex);
   }, [countries, selectedTeam]);
 
-  useEffect(() => {
-    if (!selectedTeam || countries.length === 0) return;
+  // useEffect(() => {
+  //   if (!selectedTeam || countries.length === 0) return;
 
-    const countryIndex = countries.findIndex((country) =>
-      country.leagues.some((league) =>
-        league.teams?.some((team) => team.name === selectedTeam.name)
-      )
-    );
+  //   const countryIndex = countries.findIndex((country) =>
+  //     country.leagues.some((league) =>
+  //       league.teams?.some((team) => team.name === selectedTeam.name)
+  //     )
+  //   );
 
-    if (countryIndex === -1) return;
+  //   if (countryIndex === -1) return;
 
-    const leagueIndex = countries[countryIndex].leagues.findIndex((league) =>
-      league.teams?.some((team) => team.name === selectedTeam.name)
-    );
+  //   const leagueIndex = countries[countryIndex].leagues.findIndex((league) =>
+  //     league.teams?.some((team) => team.name === selectedTeam.name)
+  //   );
 
-    if (leagueIndex === -1) return;
+  //   if (leagueIndex === -1) return;
 
-    setSelectedCountryIndex(countryIndex);
-    setSelectedLeagueIndex(leagueIndex);
-  }, [countries, selectedTeam]);
+  //   setSelectedCountryIndex(countryIndex);
+  //   setSelectedLeagueIndex(leagueIndex);
+  // }, [countries, selectedTeam]);
 
   // Equipos que tienen escudo en .webp en lugar de .png
 const WEBP_TEAMS_BY_COUNTRY: Record<string, string[]> = {
@@ -130,6 +151,29 @@ const WEBP_TEAMS_BY_COUNTRY: Record<string, string[]> = {
 };
 
   const generateLogoPath = (name: string, country: string) => {
+    if (country === "Torneo Deluxe") {
+      const mappedLogoName = TORNEO_DELUXE_LOGO_MAP[name] ?? name;
+      const brazilLogoAliases: Record<string, string> = {
+        "Athl._Paranaense": "Athl._Paranaense",
+        "RB_Bragantino": "RB_Bragantino",
+        "Vasco da Gama": "Vasco_da_Gama",
+        "São Paulo": "Sao_Paulo",
+        Grêmio: "Gremio",
+      };
+
+      const sanitizedBrazilLogoName =
+        brazilLogoAliases[mappedLogoName] ??
+        mappedLogoName.replace(/\s+/g, "_").replace(/[()]/g, "");
+      const webpTeams = WEBP_TEAMS_BY_COUNTRY.Brasil ?? [];
+      const shouldUseWebp = webpTeams.includes(mappedLogoName);
+      const extension = shouldUseWebp ? "webp" : "png";
+
+      return new URL(
+        `../../assets/Escudos/Brasil/${sanitizedBrazilLogoName}.${extension}`,
+        import.meta.url
+      ).href;
+    }
+
     const sanitizedName = name.replace(/\s+/g, "_").replace(/[()]/g, "");
 
     const webpTeams = WEBP_TEAMS_BY_COUNTRY[country] ?? [];
@@ -171,18 +215,18 @@ const WEBP_TEAMS_BY_COUNTRY: Record<string, string[]> = {
   return (
     <div className="selector-equipos">
       {/* Navegación de países */}
-      <div className="paises-navegacion">
+      {/* <div className="paises-navegacion">
         <button onClick={anteriorPais} disabled={countries.length <= 1}>{"<"}</button>
         <span>{selectedCountry?.name}</span>
         <button onClick={siguientePais} disabled={countries.length <= 1}>{">"}</button>
-      </div>
+      </div> */}
 
       {/* Navegación de ligas */}
-      <div className="ligas-navegacion">
+      {/* <div className="ligas-navegacion">
         <button onClick={anteriorLiga}>{"<"}</button>
         <span>{selectedLeague?.nombre}</span>
         <button onClick={siguienteLiga}>{">"}</button>
-      </div>
+      </div> */}
 
       {/* Equipos */}
       <div className="equipos-grid">
